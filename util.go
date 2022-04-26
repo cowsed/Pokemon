@@ -2,6 +2,7 @@ package main
 
 import "github.com/faiface/pixel/pixelgl"
 
+//Assorted helper stuff that doesn't really involve the game
 var lastW float64
 var lastH float64
 

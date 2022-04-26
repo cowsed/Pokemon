@@ -3,6 +3,7 @@ package scripts
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 //Syntax
@@ -54,8 +55,6 @@ func NewDefualtScriptEngine() *ScriptHandler {
 			"goto":  GotoFunc,
 			"jmpe":  JmpeFunc,
 			"jmpne": JmpneFunc,
-			"say":   SayFunc,
-			"sayf":  SayfFunc,
 		},
 	}
 	return &sh
@@ -94,11 +93,61 @@ func NewScript(src string) *Script {
 func (s *Script) Resume() {
 	s.paused = false
 }
+func (s *Script) Pause() {
+	s.paused = true
+}
+func (s *Script) Restart() {
+	s.paused = false
+	s.index = 0
+}
+func (s *Script) Status() string {
+	str := "running"
+	if s.paused {
+		str = "Waiting For Events"
+	}
+	return fmt.Sprintf(str+" - PC: %v", s.index)
+}
+
+func (s *Script) MakeHumanReadable(sh *ScriptHandler) string {
+	sourceText := ""
+	//Read through tokens, get arguments specified by the function. then make new line
+	index := 0
+	for index < len(s.src) {
+		line := ""
+		functionName := s.src[index]
+		index++
+
+		if functionName == "" {
+			continue
+		}
+
+		line += functionName
+		function, ok := sh.RegisteredFunctions[functionName]
+		if !ok {
+			sourceText = "Unrecognized function: '" + functionName + "'"
+			break
+		}
+
+		//Take the arguments off the top
+		for i := 0; i < function.NumArguments; i++ {
+			arg := s.src[index]
+			//if the token was originally enclosed by quotes, it would have spaces
+			if strings.Contains(arg, " ") {
+				arg = "\"" + arg + "\""
+			}
+			line += " " + arg
+			index++
+		}
+		sourceText += line + "\n"
+	}
+	return sourceText
+}
 
 func (scr *ScriptHandler) ContinueScript(script *Script) error {
 	if script.paused {
 		return nil
 	}
+
 	return scr.ExecuteScript(script)
 }
 
@@ -147,6 +196,11 @@ func (scr *ScriptHandler) ExecuteScript(script *Script) error {
 		}
 		//Call the function
 		f.Function(args, script, scr)
+
+		//Check if paused
+		if script.paused {
+			break
+		}
 
 	}
 	return nil

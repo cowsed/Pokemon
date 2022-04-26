@@ -1,10 +1,61 @@
 package main
 
 import (
+	"fmt"
+	scripts "pokemon/Scripter"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 )
+
+type DialogueHandler struct {
+	WaitingForConfirmation bool
+	ListedText             string
+	Active                 bool
+	ActiveScript           *scripts.Script
+	drawer                 *TextDrawer
+}
+
+func (dh *DialogueHandler) HandleKey(button pixelgl.Button) {
+
+	if dh.WaitingForConfirmation && button == pixelgl.KeyEnter {
+		dh.Confirmed()
+	}
+}
+func (dh *DialogueHandler) Confirmed() {
+	dh.WaitingForConfirmation = false
+
+	if dh.ActiveScript != nil {
+		dh.ActiveScript.Resume()
+	}
+	dh.Close()
+
+	fmt.Println("confirmed", dh)
+}
+func (dh *DialogueHandler) Close() {
+	dh.Active = false
+	dh.ActiveScript = nil
+
+}
+func (dh *DialogueHandler) SetText(txt string, from *scripts.Script) {
+	fmt.Println("setting text")
+	dh.ActiveScript = from
+
+	dh.ListedText = txt
+	dh.drawer.text.Clear()
+	fmt.Fprint(dh.drawer.text, txt)
+
+	dh.Active = true
+	dh.WaitingForConfirmation = true
+}
+func (dh *DialogueHandler) Draw(win *pixelgl.Window) {
+	if dh.Active {
+
+		dh.drawer.Draw(win)
+	}
+}
 
 type TextDrawer struct {
 	orig            pixel.Vec //top left
@@ -59,6 +110,6 @@ func (td *TextDrawer) MakeTextBox() {
 func (td *TextDrawer) Draw(t pixel.Target) {
 	td.bg.Draw(t)
 
-	textBL := td.orig.Add(pixel.V(20,-100))
+	textBL := td.orig.Add(pixel.V(20, -100))
 	td.text.Draw(t, pixel.IM.Moved(textBL).Scaled(textBL, 2))
 }

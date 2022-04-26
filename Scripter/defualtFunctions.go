@@ -1,7 +1,6 @@
 package scripts
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -96,26 +95,4 @@ var JmpneFunc = ScriptFunction{
 		return err
 	},
 	Docstring: "jmpe lbl, a, b	:	goes to label if a == b. a and b can be variables with $ or constant values",
-}
-var SayFunc = ScriptFunction{
-	NumArguments: 1,
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
-		scr.PrintFunc(args[0])
-		return nil
-	},
-	Docstring: "",
-}
-
-var SayfFunc = ScriptFunction{
-	NumArguments: -1,
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
-		fstring := args[0]
-		values := make([]interface{}, len(args)-1)
-		for i := 0; i < len(values); i++ {
-			values[i] = scr.ParseValue(args[i+1])
-		}
-		scr.PrintFunc(fmt.Sprintf(fstring, values...))
-		return nil
-	},
-	Docstring: "",
 }

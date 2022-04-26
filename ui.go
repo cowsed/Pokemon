@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
+	"sort"
 	"unicode"
 
 	"github.com/dusk125/pixelui"
@@ -27,6 +29,10 @@ func (g *GameStruct) DrawDebugUI() {
 
 		imgui.EndTabItem()
 	}
+	if imgui.BeginTabItem("Active Scripts") {
+		drawScriptStatuses(g)
+		imgui.EndTabItem()
+	}
 	if imgui.BeginTabItem("Script Documentation") {
 		drawScriptDocs(g)
 		imgui.EndTabItem()
@@ -42,30 +48,78 @@ func (g *GameStruct) DrawDebugUI() {
 
 }
 
-var SelectedFunction = ""
+var selectedScript string //String id into map
+func drawScriptStatuses(g *GameStruct) {
+	//Selected Script Info
+	if selectedScript != "" {
+		script := g.ActiveScripts[selectedScript]
+
+		//Overview of script
+		imgui.Text(fmt.Sprintf("%s selected", selectedScript))
+		imgui.Text(script.Status())
+
+		if imgui.Button("Restart") {
+			script.Restart()
+		}
+
+		//Show source code of script
+		scriptSource := fmt.Sprintf("%v", script.MakeHumanReadable(g.ScriptEngine))
+		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{0, 0}, imgui.InputTextFlagsReadOnly, nil)
+
+	}
+
+	//Table of all active scripts
+	names := getActiveScriptNames(g)
+
+	imgui.Text("All Active Scripts:")
+	imgui.Separator()
+	for _, name := range names {
+		if imgui.Selectable(name) {
+			selectedScript = name
+		}
+		imgui.Separator()
+
+	}
+
+}
+func getActiveScriptNames(g *GameStruct) []string {
+	names := make([]string, len(g.ActiveScripts))
+	i := 0
+	for k := range g.ActiveScripts {
+		names[i] = k
+		i++
+	}
+	sort.Strings(names)
+	return names
+}
+
+var SelectedFunctionForDocs = ""
 
 func drawScriptDocs(g *GameStruct) {
 	names := g.ScriptEngine.FunctionNames()
 	for _, n := range names {
-		var Selected = SelectedFunction == n
-		imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{.75, .75, .75, 1})
+		var Selected = SelectedFunctionForDocs == n
+		imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{X: .75, Y: .75, Z: .75, W: 1})
 
 		if Selected {
 			imgui.PopStyleColor()
 
-			imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{1, 1, 1, 1})
+			imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{X: 1, Y: 1, Z: 1, W: 1})
 
 		}
 		if imgui.Selectable(n) {
-			SelectedFunction = n
+			SelectedFunctionForDocs = n
 		}
 		imgui.PopStyleColor()
 	}
-	descText := g.ScriptEngine.GetDocstring(SelectedFunction)
+
+	//Get the documentation text or supply defualt
+	descText := g.ScriptEngine.GetDocstring(SelectedFunctionForDocs)
 	if descText == "" {
 		descText = "No Documentation Available"
 	}
-	//imgui.InputTextMultilineV("## Documentation", &descText, imgui.Vec2{X: -1, Y: -1}, 0, imgui.)
+
+	//Until an approach to line wrapping, this is it
 	imgui.PushTextWrapPosV(0)
 	imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{X: 1, Y: 0, Z: 0, W: 1})
 	imgui.Text(descText)
@@ -77,8 +131,12 @@ func (g *GameStruct) InitializeGameUI() {
 	g.atlas = text.NewAtlas(basicfont.Face7x13, text.ASCII, text.RangeTable(unicode.Latin))
 
 	//Setup Bottom of the window dialogue text thing
-	t := NewTextDrawer(g.atlas, g.win.Bounds().Size().X, g.win.Bounds().Size().Y)
-	Game.DialogueHandler = t
+	Game.WordHandler = &DialogueHandler{
+		WaitingForConfirmation: true,
+		ListedText:             "",
+		Active:                 true,
+		drawer:                 NewTextDrawer(g.atlas, g.win.Bounds().Size().X, g.win.Bounds().Size().Y),
+	}
 }
 
 func (g *GameStruct) InitializeUI() {

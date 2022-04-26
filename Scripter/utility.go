@@ -20,7 +20,7 @@ func (sh *ScriptHandler) MakeDocs() {
 func (sh *ScriptHandler) FunctionNames() []string {
 	keys := make([]string, len(sh.RegisteredFunctions))
 	i := 0
-	for k, _ := range sh.RegisteredFunctions {
+	for k := range sh.RegisteredFunctions {
 		keys[i] = k
 		i++
 	}

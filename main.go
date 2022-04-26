@@ -9,8 +9,7 @@ import (
 	scripter "pokemon/Scripter"
 )
 
-var DebugScriptSource = `
-set $x 0
+/*set $x 0
 set $y 1
 set $z 0
 dblog "wow - from a script"
@@ -22,7 +21,11 @@ addI $x $y $z
 set $x $y
 set $y $z
 dblogf 2 %s $x
-jmpne startlabel $counter 0
+jmpne startlabel $counter 0*/
+var DebugScriptSource = `
+say "wow, text"
+say "wow, text. but again"
+
 `
 
 var Game GameStruct
@@ -30,8 +33,8 @@ var Game GameStruct
 func run() {
 	//Setup Window
 	Game = GameStruct{
-		DialogueHandler: nil,
-		Scripts:         map[string]*scripter.Script{},
+		WordHandler:   nil,
+		ActiveScripts: map[string]*scripter.Script{},
 	}
 
 	cfg := pixelgl.WindowConfig{
@@ -55,9 +58,13 @@ func run() {
 
 		//Handle Input
 		Game.HandleInput()
-		//fmt.Println(Game.ScriptEngine)
-		err = Game.ScriptEngine.ContinueScript(Game.Scripts["db"])
-		check(err)
+
+		//Execute game logic in scripts
+		err = Game.ScriptEngine.ContinueScript(Game.ActiveScripts["db"])
+
+		if err != nil {
+			fmt.Fprintf(Game.logger, "Error executing script: %s", err.Error())
+		}
 
 		Game.DrawDebugUI()
 		Game.Draw(win)
@@ -71,14 +78,11 @@ func run() {
 func main() {
 
 	pixelgl.Run(run)
+
 	fmt.Println("Exitting")
 	SaveNote()
 	fmt.Println("Finished Shutdown")
-	//bytes, err := json.MarshalIndent(TestFeraligatr, "", "\t")
-	//check(err)
-	//f, _ := os.Create(TestFeraligatr.Name + ".json")
-	//f.Write(bytes)
-	//f.Close()
+
 }
 
 func check(err error) {
