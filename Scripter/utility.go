@@ -5,10 +5,10 @@ import (
 	"sort"
 )
 
-func (sh *ScriptHandler) GetDocstring(function string) string {
+func (sh *ScriptEngine) GetDocstring(function string) string {
 	return sh.RegisteredFunctions[function].Docstring
 }
-func (sh *ScriptHandler) MakeDocs() {
+func (sh *ScriptEngine) MakeDocs() {
 	keys := sh.FunctionNames()
 
 	output := ""
@@ -17,7 +17,7 @@ func (sh *ScriptHandler) MakeDocs() {
 	}
 }
 
-func (sh *ScriptHandler) FunctionNames() []string {
+func (sh *ScriptEngine) FunctionNames() []string {
 	keys := make([]string, len(sh.RegisteredFunctions))
 	i := 0
 	for k := range sh.RegisteredFunctions {

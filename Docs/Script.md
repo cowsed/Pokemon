@@ -23,6 +23,13 @@ Variables are referenced by the $ Syntax. A variable with the name x would be re
 
 ## Built-in instructions
 
+### END
+---
+```
+END
+```
+Terminates the script
+
 ### set
 ---
 ```
@@ -64,3 +71,17 @@ Jump to label if a != b. a and b can be variables or literals
 goto label
 ```
 unconditionally goes to that label
+
+### call
+---
+```
+call label
+```
+pushes the current location and goes to label. Used to enter subroutine
+
+### ret
+---
+```
+ret
+```
+returns to the top value of the stack. Used to exit subroutine

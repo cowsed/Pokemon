@@ -32,7 +32,6 @@ func (dh *DialogueHandler) Confirmed() {
 	}
 	dh.Close()
 
-	fmt.Println("confirmed", dh)
 }
 func (dh *DialogueHandler) Close() {
 	dh.Active = false
@@ -40,7 +39,6 @@ func (dh *DialogueHandler) Close() {
 
 }
 func (dh *DialogueHandler) SetText(txt string, from *scripts.Script) {
-	fmt.Println("setting text")
 	dh.ActiveScript = from
 
 	dh.ListedText = txt

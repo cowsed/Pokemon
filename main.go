@@ -9,26 +9,6 @@ import (
 	scripter "pokemon/Scripter"
 )
 
-/**/
-var DebugScriptSource = `
-set $x 0
-set $y 1
-set $z 0
-set $counter 0
-set $maxCount 12
-dblogf 2 "Printing %s nums" $maxCount
-
-startlabel:
-addI $counter 1 $counter
-addI $x $y $z
-set $x $y
-set $y $z
-
-sayf 4 "The %s of %s fibonacci number is %s" $counter $maxCount $x
-jmpne startlabel $counter $maxCount
-
-`
-
 var Game GameStruct
 
 func run() {

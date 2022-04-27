@@ -11,7 +11,7 @@ Create the interface through which the scripting language can communicate with t
 //Print to the debug console
 var DebugLogFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 1,
-	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptHandler) error {
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
 		Game.logger.Write([]byte(args[0] + "\n"))
 		return nil
 	},
@@ -21,11 +21,11 @@ var DebugLogFunction scripts.ScriptFunction = scripts.ScriptFunction{
 //Printf but to the debug console
 var DebugLogFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: -1,
-	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptHandler) error {
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
 		fstring := args[0]
 		values := make([]interface{}, len(args)-1)
 		for i := 0; i < len(values); i++ {
-			values[i] = scr.ParseValue(args[i+1])
+			values[i] = script.ParseValue(args[i+1])
 		}
 
 		fmt.Fprintf(Game.logger, fstring+"\n", values...)
@@ -36,7 +36,7 @@ var DebugLogFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 //say
 var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 1,
-	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptHandler) error {
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
 		txt := args[0]
 		Game.WordHandler.SetText(txt, script)
 		script.Pause()
@@ -49,12 +49,12 @@ var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 //sayf
 var DialogueFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: -1,
-	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptHandler) error {
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
 		//Extract format specifier and values
 		fstring := args[0]
 		values := make([]interface{}, len(args)-1)
 		for i := 0; i < len(values); i++ {
-			values[i] = scr.ParseValue(args[i+1])
+			values[i] = script.ParseValue(args[i+1])
 		}
 		txt := fmt.Sprintf(fstring, values...)
 

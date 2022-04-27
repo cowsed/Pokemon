@@ -17,7 +17,6 @@ var NoteString string
 
 func (g *GameStruct) DrawDebugUI() {
 	g.ui.NewFrame()
-	imgui.ShowDemoWindow(nil)
 
 	imgui.Begin("Debug")
 
@@ -34,6 +33,7 @@ func (g *GameStruct) DrawDebugUI() {
 		drawScriptStatuses(g)
 		imgui.EndTabItem()
 	}
+
 	if imgui.BeginTabItem("Script Documentation") {
 		drawScriptDocs(g)
 		imgui.EndTabItem()
@@ -67,6 +67,25 @@ func drawScriptStatuses(g *GameStruct) {
 		scriptSource := fmt.Sprintf("%v", script.MakeHumanReadable(g.ScriptEngine))
 		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{X: 0, Y: 0}, imgui.InputTextFlagsReadOnly, nil)
 
+		//Show the internal memory of the script
+
+		if imgui.TreeNodeV("Memory", imgui.TreeNodeFlagsCollapsingHeader+imgui.TreeNodeFlagsDefaultOpen+imgui.TreeNodeFlagsSelected) {
+			keys := getKeys(script.Memory())
+
+			//imgui.Columns(2, "memory")
+
+			for _, k := range keys {
+				v := script.Memory()[k]
+				imgui.Separator()
+				imgui.Selectable(k + ": ")
+
+				imgui.SameLine()
+
+				imgui.Selectable(v)
+			}
+
+			imgui.TreePop()
+		}
 	}
 
 	//Table of all active scripts
@@ -83,6 +102,18 @@ func drawScriptStatuses(g *GameStruct) {
 	}
 
 }
+
+func getKeys(mem map[string]string) []string {
+	ks := make([]string, len(mem))
+	i := 0
+	for k := range mem {
+		ks[i] = k
+		i++
+	}
+	sort.Strings(ks)
+	return ks
+}
+
 func getActiveScriptNames(g *GameStruct) []string {
 	names := make([]string, len(g.ActiveScripts))
 	i := 0

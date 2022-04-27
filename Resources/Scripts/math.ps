@@ -1,0 +1,15 @@
+
+set $x 2
+call increment
+sayf 2 "incremented %s" $x
+call double
+sayf 2 "doubled to %s" $x
+END
+
+increment:
+addI $x 1 $x
+ret
+
+double:
+addI $x $x $x
+ret

@@ -1,0 +1,15 @@
+set $x 0
+set $y 1
+set $z 0
+set $counter 0
+set $maxCount 12
+sayf 2 "About to print %s nums" $maxCount
+
+startlabel:
+addI $counter 1 $counter
+addI $x $y $z
+set $x $y
+set $y $z
+
+sayf 3 "Fibonacci number %s is %s" $counter $x
+jmpne startlabel $counter $maxCount

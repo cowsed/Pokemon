@@ -5,18 +5,18 @@ import (
 )
 
 //InternalSet acts as the 'cpus' way of setting. It was made its own function because it is used by many other functions
-func (scr *ScriptHandler) InternalSet(name, val string) {
+func (s *Script) InternalSet(name, val string) {
 	if isVariable(val) {
-		val = scr.ParseValue(val)
+		val = s.ParseValue(val)
 	}
-	scr.memory[name[1:]] = val
+	s.memory[name[1:]] = val
 }
 
 var SetFunction = ScriptFunction{
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 		name := args[0]
 		val := args[1]
-		scr.InternalSet(name, val)
+		script.InternalSet(name, val)
 		return nil
 	},
 	NumArguments: 2,
@@ -24,13 +24,13 @@ var SetFunction = ScriptFunction{
 }
 
 var AddIFunction = ScriptFunction{
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 		aTok := args[0]
 		bTok := args[1]
 		c := args[2]
 
-		a := scr.ParseValue(aTok)
-		b := scr.ParseValue(bTok)
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
 		aVal, err := strconv.Atoi(a)
 
 		if err != nil {
@@ -44,7 +44,7 @@ var AddIFunction = ScriptFunction{
 
 		cVal := aVal + bVal
 
-		scr.InternalSet(c, strconv.Itoa(cVal))
+		script.InternalSet(c, strconv.Itoa(cVal))
 		return nil
 	},
 	NumArguments: 3,
@@ -53,7 +53,7 @@ var AddIFunction = ScriptFunction{
 
 var GotoFunc = ScriptFunction{
 	NumArguments: 1,
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 		lbl := args[0]
 		err := script.Goto(lbl)
 		return err
@@ -63,12 +63,12 @@ var GotoFunc = ScriptFunction{
 
 var JmpeFunc = ScriptFunction{
 	NumArguments: 3,
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 
 		lbl := args[0]
 
-		a := scr.ParseValue(args[1])
-		b := scr.ParseValue(args[2])
+		a := script.ParseValue(args[1])
+		b := script.ParseValue(args[2])
 
 		var err error
 		if a == b {
@@ -81,12 +81,12 @@ var JmpeFunc = ScriptFunction{
 
 var JmpneFunc = ScriptFunction{
 	NumArguments: 3,
-	Function: func(args []string, script *Script, scr *ScriptHandler) error {
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 
 		lbl := args[0]
 
-		a := scr.ParseValue(args[1])
-		b := scr.ParseValue(args[2])
+		a := script.ParseValue(args[1])
+		b := script.ParseValue(args[2])
 
 		var err error
 		if a != b {
@@ -95,4 +95,25 @@ var JmpneFunc = ScriptFunction{
 		return err
 	},
 	Docstring: "jmpe lbl, a, b	:	goes to label if a == b. a and b can be variables with $ or constant values",
+}
+
+var CallFunc = ScriptFunction{
+	NumArguments: 1,
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		lbl := args[0]
+		script.stack.Push(script.index)
+		script.Goto(lbl)
+		return nil
+	},
+	Docstring: "call label	:	pushes the current program counter goes to the label specified. when a corresponding ret function is called, execution will resume here. Call subroutine",
+}
+
+var RetFunc = ScriptFunction{
+	NumArguments: 0,
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		pos := script.stack.Pop()
+		script.index = pos
+		return nil
+	},
+	Docstring: "ret 	:	returns to the position in the program given by call last time. Return from subroutine",
 }
