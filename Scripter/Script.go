@@ -122,14 +122,25 @@ func (s *Script) MakeHumanReadable(sh *ScriptHandler) string {
 		}
 
 		line += functionName
+		if isLabel(functionName) {
+			sourceText += line + "\n"
+			continue
+		}
 		function, ok := sh.RegisteredFunctions[functionName]
 		if !ok {
 			sourceText = "Unrecognized function: '" + functionName + "'"
 			break
 		}
+		numArgs := function.NumArguments
+
+		if function.NumArguments < 0 {
+			varArgsNumString := s.src[index]
+			index++
+			numArgs, _ = strconv.Atoi(varArgsNumString)
+		}
 
 		//Take the arguments off the top
-		for i := 0; i < function.NumArguments; i++ {
+		for i := 0; i < numArgs; i++ {
 			arg := s.src[index]
 			//if the token was originally enclosed by quotes, it would have spaces
 			if strings.Contains(arg, " ") {

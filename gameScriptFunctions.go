@@ -48,7 +48,7 @@ var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 
 //sayf
 var DialogueFFunction scripts.ScriptFunction = scripts.ScriptFunction{
-	NumArguments: 1,
+	NumArguments: -1,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptHandler) error {
 		//Extract format specifier and values
 		fstring := args[0]

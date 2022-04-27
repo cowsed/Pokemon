@@ -17,6 +17,7 @@ var NoteString string
 
 func (g *GameStruct) DrawDebugUI() {
 	g.ui.NewFrame()
+	imgui.ShowDemoWindow(nil)
 
 	imgui.Begin("Debug")
 
@@ -64,7 +65,7 @@ func drawScriptStatuses(g *GameStruct) {
 
 		//Show source code of script
 		scriptSource := fmt.Sprintf("%v", script.MakeHumanReadable(g.ScriptEngine))
-		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{0, 0}, imgui.InputTextFlagsReadOnly, nil)
+		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{X: 0, Y: 0}, imgui.InputTextFlagsReadOnly, nil)
 
 	}
 

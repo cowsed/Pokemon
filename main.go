@@ -9,22 +9,23 @@ import (
 	scripter "pokemon/Scripter"
 )
 
-/*set $x 0
+/**/
+var DebugScriptSource = `
+set $x 0
 set $y 1
 set $z 0
-dblog "wow - from a script"
-set $counter 12
-dblogf 2 "Printing %s nums" $counter
+set $counter 0
+set $maxCount 12
+dblogf 2 "Printing %s nums" $maxCount
+
 startlabel:
-addI $counter -1 $counter
+addI $counter 1 $counter
 addI $x $y $z
 set $x $y
 set $y $z
-dblogf 2 %s $x
-jmpne startlabel $counter 0*/
-var DebugScriptSource = `
-say "wow, text"
-say "wow, text. but again"
+
+sayf 4 "The %s of %s fibonacci number is %s" $counter $maxCount $x
+jmpne startlabel $counter $maxCount
 
 `
 
@@ -63,7 +64,7 @@ func run() {
 		err = Game.ScriptEngine.ContinueScript(Game.ActiveScripts["db"])
 
 		if err != nil {
-			fmt.Fprintf(Game.logger, "Error executing script: %s", err.Error())
+			fmt.Fprintf(Game.logger, "Error executing script: %v", err.Error())
 		}
 
 		Game.DrawDebugUI()
