@@ -4,8 +4,8 @@ import (
 	"strconv"
 )
 
-//InternalSet acts as the 'cpus' way of setting. It was made its own function because it is used by many other functions
-func (s *Script) InternalSet(name, val string) {
+//internalSet acts as the 'cpus' way of setting. It was made its own function because it is used by many other functions
+func (s *Script) internalSet(name, val string) {
 	if isVariable(val) {
 		val = s.ParseValue(val)
 	}
@@ -16,7 +16,7 @@ var SetFunction = ScriptFunction{
 	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 		name := args[0]
 		val := args[1]
-		script.InternalSet(name, val)
+		script.internalSet(name, val)
 		return nil
 	},
 	NumArguments: 2,
@@ -44,11 +44,93 @@ var AddIFunction = ScriptFunction{
 
 		cVal := aVal + bVal
 
-		script.InternalSet(c, strconv.Itoa(cVal))
+		script.internalSet(c, strconv.Itoa(cVal))
 		return nil
 	},
 	NumArguments: 3,
 	Docstring: "addI a, b, c	:	adds a+b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+
+var SubIFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.Atoi(a)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.Atoi(b)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal - bVal
+
+		script.internalSet(c, strconv.Itoa(cVal))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "subI a, b, c	:	does a-b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+var MulIFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.Atoi(a)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.Atoi(b)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal * bVal
+
+		script.internalSet(c, strconv.Itoa(cVal))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "mulI a, b, c	:	multiplies a*b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+var DivIFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.Atoi(a)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.Atoi(b)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal / bVal
+
+		script.internalSet(c, strconv.Itoa(cVal))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "divI a, b, c	:	divides a/b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
 }
 
 var GotoFunc = ScriptFunction{

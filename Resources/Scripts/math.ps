@@ -1,9 +1,14 @@
-
+clearmem
 set $x 2
+sayf 2 "Started at %s" $x
 call increment
 sayf 2 "incremented %s" $x
 call double
 sayf 2 "doubled to %s" $x
+
+call factorial
+sayf 2 "factorialed  to %s" $x
+
 END
 
 increment:
@@ -12,4 +17,18 @@ ret
 
 double:
 addI $x $x $x
+ret
+
+
+triple:
+addI $x $x $x
+addI $x $x $x
+ret
+
+factorial:
+set $count $x
+factorialLoop:
+subI $count 1 $count
+mulI $x $count $x
+jmpne factorialLoop $count 1
 ret

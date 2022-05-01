@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	scripts "pokemon/Scripter"
+	"strconv"
+	"time"
 )
 
 /*
@@ -40,7 +42,6 @@ var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 		txt := args[0]
 		Game.WordHandler.SetText(txt, script)
 		script.Pause()
-		fmt.Printf("paisong %#v\n", script)
 		return nil
 	},
 	Docstring: "say string	:	outputs string to the dialogue box",
@@ -65,4 +66,42 @@ var DialogueFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 		return nil
 	},
 	Docstring: "sayf n format ...	:	outputs formatted string to the dialogue box. n is the number of variables + 1. i.e. sayf 2 %s $variable",
+}
+
+var ClearMemFunction scripts.ScriptFunction = scripts.ScriptFunction{
+	NumArguments: 0,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		script.ClearMemory()
+		return nil
+	},
+	Docstring: "Resets the scripts memory. Use this if your script relies on empty memory",
+}
+
+var SetFrameFunction scripts.ScriptFunction = scripts.ScriptFunction{
+	NumArguments: 2,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		//who := args[0]
+		towhat := args[1]
+		if _, ok := Officer.Sprites[towhat]; ok {
+			FrameToRender = towhat
+		}
+		return nil
+	},
+	Docstring: "Sets the entity specified by argument 1 to the frame specified by argument 2. If the specified frame or entity does not exist, it does nothing",
+}
+
+var WaitFunction scripts.ScriptFunction = scripts.ScriptFunction{
+	NumArguments: 1,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		arg := script.ParseValue(args[0])
+		t, _ := strconv.ParseFloat(arg, 64)
+		script.Pause()
+		go func() { //TODO Make this not the most unsafe thing
+			tm := time.Duration(t * float64(time.Second))
+			time.Sleep(tm)
+			script.Resume()
+		}()
+		return nil
+	},
+	Docstring: "stops the script for time specified as the arguement (literal or variable). Do not use this to wait to get to a location or something. It will have adverse effects. Use it for narrative timing moments. (scripted look in circle",
 }

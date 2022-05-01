@@ -38,6 +38,12 @@ func (g *GameStruct) DrawDebugUI() {
 		drawScriptDocs(g)
 		imgui.EndTabItem()
 	}
+	if imgui.BeginTabItem("Sprites") {
+		//var scale float32 = 2
+		//imgui.Image(spriteSheetUIID, imgui.Vec2{639 * scale, 268 * scale})
+
+		imgui.EndTabItem()
+	}
 
 	if imgui.BeginTabItem("Notepad") {
 		imgui.InputTextMultilineV("## Notes", &NoteString, imgui.Vec2{X: -1, Y: -1}, 0, nil)
@@ -50,6 +56,7 @@ func (g *GameStruct) DrawDebugUI() {
 }
 
 var selectedScript string //String id into map
+
 func drawScriptStatuses(g *GameStruct) {
 	//Selected Script Info
 	if selectedScript != "" {
@@ -164,9 +171,9 @@ func (g *GameStruct) InitializeGameUI() {
 
 	//Setup Bottom of the window dialogue text thing
 	Game.WordHandler = &DialogueHandler{
-		WaitingForConfirmation: true,
+		WaitingForConfirmation: false,
 		ListedText:             "",
-		Active:                 true,
+		Active:                 false,
 		drawer:                 NewTextDrawer(g.atlas, g.win.Bounds().Size().X, g.win.Bounds().Size().Y),
 	}
 }

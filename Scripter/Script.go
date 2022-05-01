@@ -63,6 +63,10 @@ func NewScript(src string) *Script {
 
 	return &s
 }
+func (s *Script) ClearMemory() {
+	s.memory = map[string]string{}
+}
+
 func (s *Script) Memory() map[string]string {
 	return s.memory
 }
@@ -97,7 +101,10 @@ func (s *Script) MakeHumanReadable(sh *ScriptEngine) string {
 		if functionName == "" {
 			continue
 		}
-
+		if functionName == "END" {
+			sourceText += line + "\n"
+			continue
+		}
 		line += functionName
 		if isLabel(functionName) {
 			sourceText += line + "\n"

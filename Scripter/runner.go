@@ -14,6 +14,9 @@ func NewDefaultScriptEngine() *ScriptEngine {
 		RegisteredFunctions: map[string]ScriptFunction{
 			"set":   SetFunction,
 			"addI":  AddIFunction,
+			"subI":  SubIFunction,
+			"mulI":  MulIFunction,
+			"divI":  DivIFunction,
 			"goto":  GotoFunc,
 			"jmpe":  JmpeFunc,
 			"jmpne": JmpneFunc,

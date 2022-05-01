@@ -21,7 +21,7 @@ func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:     "In Dev",
 		Icon:      []pixel.Picture{},
-		Bounds:    pixel.R(0, 0, 1800, 1000),
+		Bounds:    pixel.R(0, 0, 1800, 900),
 		Resizable: true,
 	}
 
@@ -30,8 +30,11 @@ func run() {
 	Game.win = win
 
 	//Initialize the game engine
-	Game.InitializeUI()
+
+	Game.InitializeGraphics()
 	Game.InitializeGameUI()
+	Game.InitializeUI()
+
 	Game.InitializeScriptEngine()
 
 	//Game loop

@@ -1,0 +1,88 @@
+{
+ "Sprites": {
+  "down1": {
+   "Minx": 0,
+   "Miny": 0,
+   "Maxx": 14,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "down2": {
+   "Minx": 45,
+   "Miny": 0,
+   "Maxx": 59,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "down3": {
+   "Minx": 45,
+   "Miny": 0,
+   "Maxx": 59,
+   "Maxy": 20,
+   "Flip": true
+  },
+  "left1": {
+   "Minx": 30,
+   "Miny": 0,
+   "Maxx": 44,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "left2": {
+   "Minx": 75,
+   "Miny": 0,
+   "Maxx": 89,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "left3": {
+   "Minx": 89,
+   "Miny": 0,
+   "Maxx": 103,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "right1": {
+   "Minx": 30,
+   "Miny": 0,
+   "Maxx": 44,
+   "Maxy": 20,
+   "Flip": true
+  },
+  "right2": {
+   "Minx": 75,
+   "Miny": 0,
+   "Maxx": 89,
+   "Maxy": 20,
+   "Flip": true
+  },
+  "right3": {
+   "Minx": 89,
+   "Miny": 0,
+   "Maxx": 103,
+   "Maxy": 20,
+   "Flip": true
+  },
+  "up1": {
+   "Minx": 15,
+   "Miny": 0,
+   "Maxx": 29,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "up2": {
+   "Minx": 60,
+   "Miny": 0,
+   "Maxx": 74,
+   "Maxy": 20,
+   "Flip": false
+  },
+  "up3": {
+   "Minx": 60,
+   "Miny": 0,
+   "Maxx": 74,
+   "Maxy": 20,
+   "Flip": true
+  }
+ }
+}

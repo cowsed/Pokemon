@@ -1,1 +1,3 @@
-Things to do
+Things to do:
+Sprite loading, displaying
+Tile loading, displaying
