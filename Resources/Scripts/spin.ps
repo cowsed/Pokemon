@@ -1,14 +1,17 @@
 set $delay .2
-setframe $.name left1
-wait .5
 
-setframe $.name left2
+start:
+
+setframe $.name left1
 wait $delay
 
-setframe $.name up2
+setframe $.name down1
+wait $delay
+
+setframe $.name right1
 wait $delay
 
 setframe $.name up1
 wait $delay
 
-END
+goto start

@@ -38,12 +38,6 @@ func (g *GameStruct) DrawDebugUI() {
 		drawScriptDocs(g)
 		imgui.EndTabItem()
 	}
-	if imgui.BeginTabItem("Sprites") {
-		//var scale float32 = 2
-		//imgui.Image(spriteSheetUIID, imgui.Vec2{639 * scale, 268 * scale})
-
-		imgui.EndTabItem()
-	}
 
 	if imgui.BeginTabItem("Notepad") {
 		imgui.InputTextMultilineV("## Notes", &NoteString, imgui.Vec2{X: -1, Y: -1}, 0, nil)
@@ -55,24 +49,58 @@ func (g *GameStruct) DrawDebugUI() {
 
 }
 
-var selectedScript string //String id into map
+var selectedEntity string //String id into map
 
 func drawScriptStatuses(g *GameStruct) {
 	//Selected Script Info
-	if selectedScript != "" {
-		script := g.ActiveScripts[selectedScript]
 
-		//Overview of script
-		imgui.Text(fmt.Sprintf("%s selected", selectedScript))
-		imgui.Text(script.Status())
+	if selectedEntity != "" {
+		entity := g.ActiveEntites[selectedEntity]
+
+		imgui.Text(fmt.Sprintf("%s selected", selectedEntity))
+		imgui.Text(entity.AttachedScript.Status())
 
 		if imgui.Button("Restart") {
-			script.Restart()
+			entity.AttachedScript.Restart()
 		}
-
-		//Show source code of script
-		scriptSource := fmt.Sprintf("%v", script.MakeHumanReadable(g.ScriptEngine))
+		scriptSource := fmt.Sprintf("%v", entity.AttachedScript.MakeHumanReadable(g.ScriptEngine))
 		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{X: 0, Y: 0}, imgui.InputTextFlagsReadOnly, nil)
+
+		//Memory
+		keys := getKeys(entity.AttachedScript.Memory())
+
+		//imgui.Columns(2, "memory")
+
+		for _, k := range keys {
+			v := entity.AttachedScript.Memory()[k]
+			imgui.Separator()
+			imgui.Selectable(k + ": ")
+
+			imgui.SameLine()
+
+			imgui.Selectable(v)
+		}
+		imgui.Separator()
+
+	}
+	//Table of all active scripts
+	names := getActiveEntityNames(g)
+
+	imgui.Text("All Loaded Entities:")
+	imgui.Separator()
+	for _, name := range names {
+		if imgui.Selectable(name) {
+			selectedEntity = name
+		}
+		imgui.Separator()
+	}
+}
+
+/*
+
+
+
+
 
 		//Show the internal memory of the script
 
@@ -106,10 +134,8 @@ func drawScriptStatuses(g *GameStruct) {
 		}
 		imgui.Separator()
 
-	}
 
-}
-
+*/
 func getKeys(mem map[string]string) []string {
 	ks := make([]string, len(mem))
 	i := 0
@@ -121,10 +147,10 @@ func getKeys(mem map[string]string) []string {
 	return ks
 }
 
-func getActiveScriptNames(g *GameStruct) []string {
-	names := make([]string, len(g.ActiveScripts))
+func getActiveEntityNames(g *GameStruct) []string {
+	names := make([]string, len(g.ActiveEntites))
 	i := 0
-	for k := range g.ActiveScripts {
+	for k := range g.ActiveEntites {
 		names[i] = k
 		i++
 	}

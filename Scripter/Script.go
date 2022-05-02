@@ -81,6 +81,11 @@ func (s *Script) Restart() {
 	s.paused = false
 	s.index = 0
 }
+
+func (s *Script) SetMemory(key, value string) {
+	s.memory[key] = value
+}
+
 func (s *Script) Status() string {
 	str := "running"
 	if s.paused {

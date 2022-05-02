@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"image/color"
 
-	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
 
 	"github.com/dusk125/pixelui"
@@ -16,8 +15,8 @@ import (
 )
 
 var grid *imdraw.IMDraw
-var Officer *graphics.SpriteGroup
-var FrameToRender = "down1"
+
+var TestEntity *Entity
 
 const ImageScale float64 = 5
 
@@ -29,7 +28,7 @@ type GameStruct struct {
 	logger      *Logger
 
 	ScriptEngine  *scripts.ScriptEngine
-	ActiveScripts map[string]*scripts.Script
+	ActiveEntites map[string]*Entity
 }
 
 func (g *GameStruct) HandleInput() {
@@ -43,9 +42,6 @@ func (g *GameStruct) HandleInput() {
 }
 
 func (g *GameStruct) LoadGraphics() {
-	var err error
-	Officer, err = graphics.LoadSprite("Resources/Sprites/Builtin/brendan.png", "Resources/Sprites/Builtin/brendan.json")
-	check(err)
 }
 
 func (g *GameStruct) Draw(win *pixelgl.Window) {
@@ -55,7 +51,10 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 	grid.Draw(win)
 
 	//sprite.Draw(win, pixel.IM.Scaled(pixel.V(0, 0), 1).Moved(pixel.V(8, 16)))
-	Officer.Sprites[FrameToRender].Draw(g.win, pixel.V(3, 2+1.0/16.0), ImageScale)
+	for _, name := range getActiveEntityNames(g) {
+		g.ActiveEntites[name].Draw(win)
+
+	} //Officer.Sprites[FrameToRender].Draw(g.win, pixel.V(3, 2+1.0/16.0), ImageScale)
 
 	g.WordHandler.Draw(win)
 
@@ -78,10 +77,10 @@ func (g *GameStruct) InitializeScriptEngine() {
 	g.ScriptEngine.RegisteredFunction("setframe", SetFrameFunction)
 	g.ScriptEngine.RegisteredFunction("wait", WaitFunction)
 
-	//Debug program
-	scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
-	scr1.Resume()
-	g.ActiveScripts["db"] = scr1
+}
+func (g *GameStruct) AddEntity(name string, E *Entity) {
+	g.ActiveEntites[name] = E
+	E.AttachedScript.SetMemory(".name", name)
 }
 
 func (g *GameStruct) MakeGrid() {

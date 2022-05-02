@@ -80,10 +80,10 @@ var ClearMemFunction scripts.ScriptFunction = scripts.ScriptFunction{
 var SetFrameFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 2,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
-		//who := args[0]
-		towhat := args[1]
-		if _, ok := Officer.Sprites[towhat]; ok {
-			FrameToRender = towhat
+		who := script.ParseValue(args[0])
+		towhat := script.ParseValue(args[1])
+		if _, ok := Game.ActiveEntites[who].Sprite.Sprites[towhat]; ok {
+			Game.ActiveEntites[who].frameToRender = towhat
 		}
 		return nil
 	},
@@ -104,4 +104,21 @@ var WaitFunction scripts.ScriptFunction = scripts.ScriptFunction{
 		return nil
 	},
 	Docstring: "stops the script for time specified as the arguement (literal or variable). Do not use this to wait to get to a location or something. It will have adverse effects. Use it for narrative timing moments. (scripted look in circle",
+}
+
+var MoveFunction scripts.ScriptFunction = scripts.ScriptFunction{
+	NumArguments: 2,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+
+		return nil
+	},
+	Docstring: "",
+}
+var SetPosFunction scripts.ScriptFunction = scripts.ScriptFunction{
+	NumArguments: 2,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+
+		return nil
+	},
+	Docstring: "",
 }
