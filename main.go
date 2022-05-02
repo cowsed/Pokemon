@@ -42,6 +42,7 @@ func run() {
 		internal: "",
 	}
 	log.SetOutput(logger)
+	log.Println("Beginning log")
 
 	//Debug program
 	{

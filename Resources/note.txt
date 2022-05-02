@@ -1,3 +1,5 @@
 Things to do:
 Sprite loading, displaying
 Tile loading, displaying
+Entity movement
+Camera Movement

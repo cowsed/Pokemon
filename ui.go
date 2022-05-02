@@ -78,28 +78,29 @@ func drawScriptStatuses(g *GameStruct) {
 		keys := getKeys(entity.AttachedScript.Memory())
 
 		//imgui.Columns(2, "memory")
+		if imgui.TreeNodeV("Memory", imgui.TreeNodeFlagsCollapsingHeader) {
 
-		for _, k := range keys {
-			v := entity.AttachedScript.Memory()[k]
+			for _, k := range keys {
+				v := entity.AttachedScript.Memory()[k]
+				imgui.Separator()
+				imgui.Selectable(k + ": ")
+
+				imgui.SameLine()
+
+				imgui.Selectable(v)
+			}
 			imgui.Separator()
-			imgui.Selectable(k + ": ")
-
-			imgui.SameLine()
-
-			imgui.Selectable(v)
+			imgui.TreePop()
 		}
-		imgui.Separator()
-
 	} else {
 
 		imgui.Text("No Entity Selected")
 	}
 
-	if imgui.TreeNodeV("Active Entities", imgui.TreeNodeFlagsCollapsingHeader) {
+	if imgui.TreeNodeV("Active Entities", imgui.TreeNodeFlagsCollapsingHeader+imgui.TreeNodeFlagsDefaultOpen) {
 		//Table of all active scripts
 		names := getActiveEntityNames(g)
 
-		imgui.Text("All Loaded Entities:")
 		imgui.Separator()
 		for _, name := range names {
 			if imgui.Selectable(name) {
