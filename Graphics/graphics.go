@@ -28,7 +28,8 @@ func (f *FlippableSprite) Draw(win pixel.Target, location pixel.Vec, ImageScale 
 	}
 
 	//Calculate window position
-	x := (location.X*16 + f.s.Frame().W()/2) * ImageScale
+	//TODO revisit this. x should be centered. bottom of sprite is actually where it is so draw it there. Not actually sure
+	x := (location.X*16 + 8) * ImageScale
 	y := (location.Y*16 + f.s.Frame().H()/2) * ImageScale
 
 	f.s.Draw(win, pixel.IM.ScaledXY(pixel.V(0, 0), scaleVec.Scaled(ImageScale)).Moved(pixel.V(x, y)))

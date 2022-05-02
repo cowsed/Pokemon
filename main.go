@@ -51,8 +51,6 @@ func run() {
 			AttachedScript: nil,
 			Sprite:         nil,
 			frameToRender:  "down1",
-			x:              4,
-			y:              4,
 		}
 
 		scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
@@ -69,8 +67,6 @@ func run() {
 			AttachedScript: nil,
 			Sprite:         nil,
 			frameToRender:  "down2",
-			x:              2,
-			y:              2,
 		}
 
 		scr2 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
@@ -90,7 +86,7 @@ func run() {
 
 		//Do Scripts
 		for _, name := range getActiveEntityNames(&Game) {
-			err = Game.ActiveEntites[name].DoScript(Game.ScriptEngine)
+			err = Game.ActiveEntites[name].Update(Game.ScriptEngine)
 
 			if err != nil {
 				log.Printf("Error executing script of entity %s: %v\n", name, err.Error())

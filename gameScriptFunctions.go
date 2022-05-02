@@ -37,7 +37,7 @@ var DebugLogFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	}, Docstring: "Logs the specified text to the game console using printf. See the Sayf documentation",
 }
 
-//say
+//say msg
 var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 1,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
@@ -49,7 +49,7 @@ var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	Docstring: "say string	:	outputs string to the dialogue box",
 }
 
-//sayf
+//sayf n fstring args
 var DialogueFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: -1,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
@@ -90,6 +90,7 @@ var ClearMemFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	Docstring: "Resets the scripts memory. Use this if your script relies on empty memory",
 }
 
+//setframe who frame
 var SetFrameFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 2,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
@@ -103,6 +104,8 @@ var SetFrameFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	Docstring: "Sets the entity specified by argument 1 to the frame specified by argument 2. If the specified frame or entity does not exist, it does nothing",
 }
 
+
+//wait t
 var WaitFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 1,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
@@ -116,20 +119,26 @@ var WaitFunction scripts.ScriptFunction = scripts.ScriptFunction{
 		Game.ActiveEntites[script.GetMemory(".name")].clockActive = true
 		return nil
 	},
-	Docstring: "stops the script for time specified as the arguement (literal or variable). Do not use this to wait to get to a location or something. It will have adverse effects. Use it for narrative timing moments. (scripted look in circle",
+	Docstring: "stops the script for time specified as the arguement (literal or variable).  Use it for narrative timing moments. (scripted look in circle)",
 }
 
-var MoveFunction scripts.ScriptFunction = scripts.ScriptFunction{
-	NumArguments: 2,
-	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
-
-		return nil
-	},
-	Docstring: "",
-}
+//setpos who x y
 var SetPosFunction scripts.ScriptFunction = scripts.ScriptFunction{
-	NumArguments: 2,
+	NumArguments: 3,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		name := script.ParseValue(args[0])
+		xStr := args[1]
+		yStr := args[2]
+		x, err := strconv.ParseFloat(xStr, 64)
+		if err!=nil{
+			return nil
+		}
+		y, err := strconv.ParseFloat(yStr, 64)
+		if err!=nil{
+			return nil
+		}
+
+		Game.ActiveEntites[name].SetPos(x,y)
 
 		return nil
 	},

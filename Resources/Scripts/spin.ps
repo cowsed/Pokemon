@@ -1,17 +1,18 @@
 set $delay .2
+setpos $.name 8 2
 
 start:
 
 setframe $.name left1
 wait $delay
 
-setframe $.name down1
+setframe $.name up1
 wait $delay
 
 setframe $.name right1
 wait $delay
 
-setframe $.name up1
+setframe $.name down1
 wait $delay
 
 goto start

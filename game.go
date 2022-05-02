@@ -82,6 +82,8 @@ func (g *GameStruct) InitializeScriptEngine() {
 	g.ScriptEngine.RegisterFunction("clearmem", ClearMemFunction)
 	g.ScriptEngine.RegisterFunction("setframe", SetFrameFunction)
 	g.ScriptEngine.RegisterFunction("wait", WaitFunction)
+	g.ScriptEngine.RegisterFunction("setpos", SetPosFunction)
+	
 
 }
 func (g *GameStruct) AddEntity(name string, E *Entity) {
