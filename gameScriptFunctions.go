@@ -104,7 +104,6 @@ var SetFrameFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	Docstring: "Sets the entity specified by argument 1 to the frame specified by argument 2. If the specified frame or entity does not exist, it does nothing",
 }
 
-
 //wait t
 var WaitFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 1,
@@ -130,17 +129,77 @@ var SetPosFunction scripts.ScriptFunction = scripts.ScriptFunction{
 		xStr := args[1]
 		yStr := args[2]
 		x, err := strconv.ParseFloat(xStr, 64)
-		if err!=nil{
-			return nil
+		if err != nil {
+			return err
 		}
 		y, err := strconv.ParseFloat(yStr, 64)
-		if err!=nil{
-			return nil
+		if err != nil {
+			return err
 		}
 
-		Game.ActiveEntites[name].SetPos(x,y)
+		Game.ActiveEntites[name].SetPos(x, y)
 
 		return nil
 	},
 	Docstring: "",
+}
+
+//movx who tx
+var MovXFunction = scripts.ScriptFunction{
+	NumArguments: 2,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		
+		who := script.ParseValue(args[0])
+		newXStr := args[1]
+		newX, err := strconv.ParseFloat(newXStr, 64)
+
+		if err != nil {
+			return err
+		}
+		if _, ok:=Game.ActiveEntites[who]; !ok{
+			return fmt.Errorf("no entity named %s", who)
+		}
+
+		//Already there
+		if Game.ActiveEntites[who].targetX == newX{
+			return nil
+		}
+
+
+		Game.ActiveEntites[who].targetX = newX
+		Game.ActiveEntites[who].AttachedScript.Pause()
+
+		return nil
+	},
+
+	Docstring: "movx who target : moves the sprite specified to the location in the x direction",
+}
+
+//movx who tx
+var MovYFunction = scripts.ScriptFunction{
+	NumArguments: 2,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		
+		who := script.ParseValue(args[0])
+		newYStr := args[1]
+		newY, err := strconv.ParseFloat(newYStr, 64)
+
+		if err != nil {
+			return err
+		}
+		if _, ok:=Game.ActiveEntites[who]; !ok{
+			return fmt.Errorf("no entity named %s", who)
+		}
+
+		//Already there
+		if Game.ActiveEntites[who].targetY == newY{
+			return nil
+		}
+		Game.ActiveEntites[who].targetY = newY
+		Game.ActiveEntites[who].AttachedScript.Pause()
+
+		return nil
+	},
+
+	Docstring: "movy who target : moves the sprite specified to the location in the y direction",
 }

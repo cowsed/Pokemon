@@ -83,6 +83,8 @@ func (g *GameStruct) InitializeScriptEngine() {
 	g.ScriptEngine.RegisterFunction("setframe", SetFrameFunction)
 	g.ScriptEngine.RegisterFunction("wait", WaitFunction)
 	g.ScriptEngine.RegisterFunction("setpos", SetPosFunction)
+	g.ScriptEngine.RegisterFunction("movx", MovXFunction)
+	g.ScriptEngine.RegisterFunction("movy", MovYFunction)
 	
 
 }

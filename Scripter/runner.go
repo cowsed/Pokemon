@@ -84,7 +84,11 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 			args[i] = script.takeToken()
 		}
 		//Call the function
-		f.Function(args, script, scr)
+		err := f.Function(args, script, scr)
+		if err!=nil{
+			script.Pause()
+			return err
+		}
 
 		//Check if paused
 		if script.paused {

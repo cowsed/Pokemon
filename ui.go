@@ -74,6 +74,14 @@ func drawScriptStatuses(g *GameStruct) {
 		scriptSource := fmt.Sprintf("%v", entity.AttachedScript.MakeHumanReadable(g.ScriptEngine))
 		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{X: 0, Y: 0}, imgui.InputTextFlagsReadOnly, nil)
 
+		if imgui.TreeNodeV("Internal Rep", imgui.TreeNodeFlagsCollapsingHeader) {
+			s := fmt.Sprintf("%#v", entity)
+			imgui.PushTextWrapPosV(0)
+			imgui.Text(s)
+			imgui.PopTextWrapPos()
+			imgui.TreePop()
+		}
+
 		//Memory
 		keys := getKeys(entity.AttachedScript.Memory())
 
@@ -112,46 +120,6 @@ func drawScriptStatuses(g *GameStruct) {
 	}
 }
 
-/*
-
-
-
-
-
-		//Show the internal memory of the script
-
-		if imgui.TreeNodeV("Memory", imgui.TreeNodeFlagsCollapsingHeader+imgui.TreeNodeFlagsDefaultOpen+imgui.TreeNodeFlagsSelected) {
-			keys := getKeys(script.Memory())
-
-			//imgui.Columns(2, "memory")
-
-			for _, k := range keys {
-				v := script.Memory()[k]
-				imgui.Separator()
-				imgui.Selectable(k + ": ")
-
-				imgui.SameLine()
-
-				imgui.Selectable(v)
-			}
-
-			imgui.TreePop()
-		}
-	}
-
-	//Table of all active scripts
-	names := getActiveScriptNames(g)
-
-	imgui.Text("All Active Scripts:")
-	imgui.Separator()
-	for _, name := range names {
-		if imgui.Selectable(name) {
-			selectedScript = name
-		}
-		imgui.Separator()
-
-
-*/
 func getKeys(mem map[string]string) []string {
 	ks := make([]string, len(mem))
 	i := 0

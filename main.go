@@ -53,7 +53,7 @@ func run() {
 			frameToRender:  "down1",
 		}
 
-		scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
+		scr1 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
 		scr1.Resume()
 		TestEntity.AttachedScript = scr1
 
@@ -69,7 +69,7 @@ func run() {
 			frameToRender:  "down2",
 		}
 
-		scr2 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
+		scr2 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
 		scr2.Resume()
 		TestEntity2.AttachedScript = scr2
 

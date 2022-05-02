@@ -1,16 +1,19 @@
-set $delay .2
+set $delay .12
 setpos $.name 4 4
 
-setframe $.name left1
-wait .5
-
-setframe $.name left2
+start:
+movx $.name 4
 wait $delay
 
-setframe $.name up2
+movy $.name 5
 wait $delay
 
-setframe $.name up1
+movx $.name 5
 wait $delay
+
+movy $.name 4
+wait $delay
+
+goto start
 
 END
