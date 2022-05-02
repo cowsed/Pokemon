@@ -45,7 +45,7 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 		//DB print
 
 		//Get the instruction
-		action := script.TakeToken()
+		action := script.takeToken()
 
 		//Ignore nonsense
 		if len(action) <= 1 {
@@ -66,13 +66,13 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 
 		f, ok := scr.RegisteredFunctions[action]
 		if !ok {
-			err := fmt.Errorf("unknown instruction : %s", action)
+			err := fmt.Errorf("unknown instruction : %s - %v", action, []byte(action))
 			return err
 		}
 		//Take arguments from the code. Handle variable arguments if specified (numArguments < 0)
 		argsToGet := f.NumArguments
 		if f.NumArguments < 0 {
-			numArgs, err := strconv.Atoi(script.TakeToken())
+			numArgs, err := strconv.Atoi(script.takeToken())
 			if err != nil {
 				return fmt.Errorf("error reading variable arguments on instruction: %s : %v", action, err)
 			}
@@ -81,7 +81,7 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 		//Get the arguments
 		args := make([]string, argsToGet)
 		for i := 0; i < argsToGet; i++ {
-			args[i] = script.TakeToken()
+			args[i] = script.takeToken()
 		}
 		//Call the function
 		f.Function(args, script, scr)

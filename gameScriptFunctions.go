@@ -4,6 +4,7 @@ import (
 	"fmt"
 	scripts "pokemon/Scripter"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -68,10 +69,21 @@ var DialogueFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	Docstring: "sayf n format ...	:	outputs formatted string to the dialogue box. n is the number of variables + 1. i.e. sayf 2 %s $variable",
 }
 
+//clearmem
 var ClearMemFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 0,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+		//Find all special variables (starting with .)
+		specialStore := map[string]string{}
+		for k, v := range script.Memory() {
+			if strings.HasPrefix(k, ".") {
+				specialStore[k] = v
+			}
+		}
 		script.ClearMemory()
+		for k, v := range specialStore {
+			script.SetMemory(k, v)
+		}
 		return nil
 	},
 	Docstring: "Resets the scripts memory. Use this if your script relies on empty memory",

@@ -30,3 +30,10 @@ Prints the message to the debug console
 say n format ...
 ```
 does the same thing as sayf but instead of going to the dialogue box goes to the log. Will not block.
+
+### clearmem
+
+```
+clearmem
+```
+resets everything in memory. does not overwrite special variables (.name, .x, .y)

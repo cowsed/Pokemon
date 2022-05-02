@@ -1,6 +1,7 @@
 package scripts
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -41,7 +42,7 @@ func NewScriptFromFile(filepath string) *Script {
 }
 
 func NewScript(src string) *Script {
-
+	src = string(NormalizeNewlines([]byte(src)))
 	srcTokens := Split(src)
 	s := Script{
 		src:    srcTokens,
@@ -120,7 +121,8 @@ func (s *Script) MakeHumanReadable(sh *ScriptEngine) string {
 		}
 		function, ok := sh.RegisteredFunctions[functionName]
 		if !ok {
-			sourceText = "Unrecognized function: '" + functionName + "'"
+			sourceText = "Unrecognized function: '" + functionName + "' " + fmt.Sprint([]byte(functionName))
+			fmt.Println(s.src)
 			break
 		}
 		numArgs := function.NumArguments
@@ -155,7 +157,7 @@ func (s *Script) Goto(lbl string) error {
 	return nil
 }
 
-func (s *Script) TakeToken() string {
+func (s *Script) takeToken() string {
 	if s.index >= len(s.src) {
 		return "END"
 	}
@@ -165,7 +167,7 @@ func (s *Script) TakeToken() string {
 }
 
 func (s *Script) ParseValue(name string) string {
-	if isVariable(name) { //Remove% if still there
+	if isVariable(name) { //Remove$ if still there
 		return s.memory[name[1:]]
 	}
 	return name
@@ -231,4 +233,12 @@ func isVariable(w string) bool {
 func isLabel(w string) bool {
 	res := w[len(w)-1:] == labelChar
 	return res
+}
+
+func NormalizeNewlines(d []byte) []byte {
+	// replace CR LF \r\n (windows) with LF \n (unix)
+	d = bytes.Replace(d, []byte{13, 10}, []byte{10}, -1)
+	// replace CF \r (mac) with LF \n (unix)
+	d = bytes.Replace(d, []byte{13}, []byte{10}, -1)
+	return d
 }
