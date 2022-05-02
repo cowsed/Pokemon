@@ -85,6 +85,9 @@ func (s *Script) Restart() {
 func (s *Script) SetMemory(key, value string) {
 	s.memory[key] = value
 }
+func (s *Script) GetMemory(key string) string {
+	return s.memory[key]
+}
 
 func (s *Script) Status() string {
 	str := "running"

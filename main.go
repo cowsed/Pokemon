@@ -4,7 +4,6 @@ import (
 	"fmt"
 	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
-	"runtime"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -78,15 +77,13 @@ func run() {
 
 	//Game loop
 	for !win.Closed() {
-		fmt.Println(runtime.NumGoroutine())
-
 		//Handle Input
 		Game.HandleInput()
 
 		//Do Scripts
 		for _, name := range getActiveEntityNames(&Game) {
+			err = Game.ActiveEntites[name].DoScript(Game.ScriptEngine)
 
-			err = Game.ScriptEngine.ContinueScript(Game.ActiveEntites[name].AttachedScript)
 			if err != nil {
 				fmt.Fprintf(Game.logger, "Error executing script of entity %s: %v", name, err.Error())
 			}

@@ -96,11 +96,11 @@ var WaitFunction scripts.ScriptFunction = scripts.ScriptFunction{
 		arg := script.ParseValue(args[0])
 		t, _ := strconv.ParseFloat(arg, 64)
 		script.Pause()
-		go func() { //TODO Make this not the most unsafe thing
-			tm := time.Duration(t * float64(time.Second))
-			time.Sleep(tm)
-			script.Resume()
-		}()
+		tm := time.Duration(t * float64(time.Second))
+
+		Game.ActiveEntites[script.GetMemory(".name")].clockStart = time.Now()
+		Game.ActiveEntites[script.GetMemory(".name")].clockTime = tm
+		Game.ActiveEntites[script.GetMemory(".name")].clockActive = true
 		return nil
 	},
 	Docstring: "stops the script for time specified as the arguement (literal or variable). Do not use this to wait to get to a location or something. It will have adverse effects. Use it for narrative timing moments. (scripted look in circle",
