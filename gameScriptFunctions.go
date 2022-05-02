@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	scripts "pokemon/Scripter"
 	"strconv"
 	"strings"
@@ -15,7 +16,7 @@ Create the interface through which the scripting language can communicate with t
 var DebugLogFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	NumArguments: 1,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
-		Game.logger.Write([]byte(args[0] + "\n"))
+		log.Println(args[0])
 		return nil
 	},
 	Docstring: "Logs the specified text to the game console",
@@ -31,7 +32,7 @@ var DebugLogFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 			values[i] = script.ParseValue(args[i+1])
 		}
 
-		fmt.Fprintf(Game.logger, fstring+"\n", values...)
+		log.Printf(fstring+"\n", values...)
 		return nil
 	}, Docstring: "Logs the specified text to the game console using printf. See the Sayf documentation",
 }

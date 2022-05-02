@@ -27,7 +27,7 @@ func NewDefaultScriptEngine() *ScriptEngine {
 	return &sh
 }
 
-func (sh *ScriptEngine) RegisteredFunction(name string, sf ScriptFunction) {
+func (sh *ScriptEngine) RegisterFunction(name string, sf ScriptFunction) {
 	sh.RegisteredFunctions[name] = sf
 }
 

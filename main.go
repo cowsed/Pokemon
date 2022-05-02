@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
 
@@ -10,6 +11,7 @@ import (
 )
 
 var Game GameStruct
+var logger *Logger
 
 func run() {
 	//Setup Window
@@ -35,6 +37,11 @@ func run() {
 	Game.InitializeUI()
 
 	Game.InitializeScriptEngine()
+
+	logger = &Logger{
+		internal: "",
+	}
+	log.SetOutput(logger)
 
 	//Debug program
 	{
@@ -85,7 +92,7 @@ func run() {
 			err = Game.ActiveEntites[name].DoScript(Game.ScriptEngine)
 
 			if err != nil {
-				fmt.Fprintf(Game.logger, "Error executing script of entity %s: %v", name, err.Error())
+				log.Printf("Error executing script of entity %s: %v\n", name, err.Error())
 			}
 		}
 

@@ -14,6 +14,7 @@ import (
 )
 
 var NoteString string
+var ScriptDocsShown = false
 
 func (g *GameStruct) DrawDebugUI() {
 	g.ui.NewFrame()
@@ -24,18 +25,13 @@ func (g *GameStruct) DrawDebugUI() {
 
 	if imgui.BeginTabItem("Debug Console") {
 
-		s := g.logger.String()
+		s := logger.String()
 		imgui.InputTextMultilineV("## Log", &s, imgui.Vec2{X: -1, Y: -1}, imgui.InputTextFlagsReadOnly, nil)
 
 		imgui.EndTabItem()
 	}
 	if imgui.BeginTabItem("Active Scripts") {
 		drawScriptStatuses(g)
-		imgui.EndTabItem()
-	}
-
-	if imgui.BeginTabItem("Script Documentation") {
-		drawScriptDocs(g)
 		imgui.EndTabItem()
 	}
 
@@ -47,6 +43,13 @@ func (g *GameStruct) DrawDebugUI() {
 
 	imgui.End()
 
+	//Script Documentation window
+	if ScriptDocsShown {
+		imgui.BeginV("Script Documentation", &ScriptDocsShown, 0)
+		imgui.Text("Click on a function to view its docstring")
+		drawScriptDocs(g)
+		imgui.End()
+	}
 }
 
 var selectedEntity string //String id into map
@@ -63,6 +66,11 @@ func drawScriptStatuses(g *GameStruct) {
 		if imgui.Button("Restart") {
 			entity.AttachedScript.Restart()
 		}
+		imgui.SameLine()
+		if imgui.Button("Show Script Docs") {
+			ScriptDocsShown = true
+		}
+
 		scriptSource := fmt.Sprintf("%v", entity.AttachedScript.MakeHumanReadable(g.ScriptEngine))
 		imgui.InputTextMultilineV("## Source", &scriptSource, imgui.Vec2{X: 0, Y: 0}, imgui.InputTextFlagsReadOnly, nil)
 
@@ -82,17 +90,24 @@ func drawScriptStatuses(g *GameStruct) {
 		}
 		imgui.Separator()
 
-	}
-	//Table of all active scripts
-	names := getActiveEntityNames(g)
+	} else {
 
-	imgui.Text("All Loaded Entities:")
-	imgui.Separator()
-	for _, name := range names {
-		if imgui.Selectable(name) {
-			selectedEntity = name
-		}
+		imgui.Text("No Entity Selected")
+	}
+
+	if imgui.TreeNodeV("Active Entities", imgui.TreeNodeFlagsCollapsingHeader) {
+		//Table of all active scripts
+		names := getActiveEntityNames(g)
+
+		imgui.Text("All Loaded Entities:")
 		imgui.Separator()
+		for _, name := range names {
+			if imgui.Selectable(name) {
+				selectedEntity = name
+			}
+			imgui.Separator()
+		}
+		imgui.TreePop()
 	}
 }
 
@@ -211,8 +226,6 @@ func (g *GameStruct) InitializeUI() {
 	g.ui.AddTTFFont("Resources/FreeMono.ttf", 24)
 
 	imgui.CurrentStyle().ScaleAllSizes(2)
-
-	Game.logger = &Logger{}
 
 }
 
