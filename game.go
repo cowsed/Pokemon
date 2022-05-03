@@ -40,15 +40,12 @@ func (g *GameStruct) HandleInput() {
 	}
 }
 
-func (g *GameStruct) LoadGraphics() {
-}
-
 func (g *GameStruct) Draw(win *pixelgl.Window) {
 	win.Clear(color.Gray{
 		Y: 80,
 	})
 	//Draw environment
-	g.env.Draw(win, pixel.V(0, 0))
+	g.env.Draw(win, pixel.V(16*ImageScale, 0))
 
 	//Draw entities
 	for _, name := range getActiveEntityNames(g) {
@@ -56,6 +53,23 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 
 	}
 
+	//Draw box over active entity
+	if selectedEntity != "" {
+		e := Game.ActiveEntites[selectedEntity]
+		d := imdraw.New(nil)
+
+		d.Color = color.RGBA{
+			R: 255,
+			G: 255,
+			B: 255,
+			A: 60,
+		}
+		//d.SetMatrix(pixel.IM.Moved(pixel.V(e.x, e.y)))
+		d.Push(pixel.V((e.x+.5)*16*ImageScale, (e.y+.5)*16*ImageScale))
+		d.Circle(70, 10)
+
+		d.Draw(win)
+	}
 	//Draw game ui
 	g.WordHandler.Draw(win)
 
@@ -64,12 +78,12 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 }
 
 func (g *GameStruct) InitializeGraphics() {
-	g.LoadGraphics()
-	grid := &GridEnv{
-		imd: &imdraw.IMDraw{},
+
+	var err error
+	g.env, err = NewImageEnvFromFile("/home/rich/SelfGaming/Pokemon/Resources/Environments/PalleteTown/ptown.png")
+	if err != nil {
+		panic(err)
 	}
-	g.env = grid
-	grid.MakeGrid()
 }
 
 func (g *GameStruct) InitializeScriptEngine() {
@@ -85,7 +99,6 @@ func (g *GameStruct) InitializeScriptEngine() {
 	g.ScriptEngine.RegisterFunction("setpos", SetPosFunction)
 	g.ScriptEngine.RegisterFunction("movx", MovXFunction)
 	g.ScriptEngine.RegisterFunction("movy", MovYFunction)
-	
 
 }
 func (g *GameStruct) AddEntity(name string, E *Entity) {
