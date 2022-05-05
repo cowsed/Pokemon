@@ -41,22 +41,17 @@ func (g *GameStruct) HandleInput() {
 		g.WordHandler.HandleKey(pixelgl.KeyEnter)
 	}
 
-	//If not moving, accept input, if already moving, buffer an input
-	target := &Game.player.currentDirection
-	if Game.player.currentDirection != NoDirection {
-		target = &Game.player.queuedDirection
-	}
 	if g.ui.Pressed(pixelgl.KeyLeft) {
-		*target = Left
+		g.player.HandleInput(Left)
 	}
 	if g.ui.Pressed(pixelgl.KeyRight) {
-		*target = Right
+		g.player.HandleInput(Right)
 	}
 	if g.ui.Pressed(pixelgl.KeyDown) {
-		*target = Down
+		g.player.HandleInput(Down)
 	}
 	if g.ui.Pressed(pixelgl.KeyUp) {
-		*target = Up
+		g.player.HandleInput(Up)
 	}
 
 }

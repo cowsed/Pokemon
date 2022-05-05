@@ -34,6 +34,7 @@ func (g *GameStruct) DrawDebugUI() {
 	}
 	if imgui.BeginTabItem("Player") {
 		g.drawPlayerUi()
+		g.player.DrawUI()
 		imgui.EndTabItem()
 	}
 

@@ -17,6 +17,7 @@ var pc *PerformanceCounter = &PerformanceCounter{
 	lastAddTime:   time.Now(),
 	lastFPS:       -99,
 	lastFrameTime: -99,
+	doingVsync:    true,
 }
 
 func run() {
@@ -31,6 +32,7 @@ func run() {
 		Icon:      []pixel.Picture{},
 		Bounds:    pixel.R(0, 0, 1800, 900),
 		Resizable: true,
+		VSync:     true,
 	}
 
 	win, err := pixelgl.NewWindow(cfg)

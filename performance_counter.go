@@ -20,6 +20,7 @@ type PerformanceCounter struct {
 	count         int
 
 	doingVsync bool
+	SlowDown   bool
 
 	frame uint
 }
@@ -68,6 +69,8 @@ func (pc *PerformanceCounter) DrawUI() {
 		pc.ftSum = 0
 	}
 
+	imgui.Checkbox("Slow down", &pc.SlowDown)
+
 	m := runtime.MemStats{}
 	runtime.ReadMemStats(&m)
 
@@ -78,4 +81,7 @@ func (pc *PerformanceCounter) DrawUI() {
 
 	imgui.End()
 
+	if pc.SlowDown {
+		time.Sleep(200 * time.Millisecond)
+	}
 }
