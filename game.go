@@ -41,20 +41,24 @@ func (g *GameStruct) HandleInput() {
 		g.WordHandler.HandleKey(pixelgl.KeyEnter)
 	}
 
-	if Game.player.queuedDirection == NoDirection {
-		if g.ui.Pressed(pixelgl.KeyLeft) {
-			g.player.queuedDirection = Left
-		}
-		if g.ui.Pressed(pixelgl.KeyRight) {
-			g.player.queuedDirection = Right
-		}
-		if g.ui.Pressed(pixelgl.KeyDown) {
-			g.player.queuedDirection = Down
-		}
-		if g.ui.Pressed(pixelgl.KeyUp) {
-			g.player.queuedDirection = Up
-		}
+	//If not moving, accept input, if already moving, buffer an input
+	target := &Game.player.currentDirection
+	if Game.player.currentDirection != NoDirection {
+		target = &Game.player.queuedDirection
 	}
+	if g.ui.Pressed(pixelgl.KeyLeft) {
+		*target = Left
+	}
+	if g.ui.Pressed(pixelgl.KeyRight) {
+		*target = Right
+	}
+	if g.ui.Pressed(pixelgl.KeyDown) {
+		*target = Down
+	}
+	if g.ui.Pressed(pixelgl.KeyUp) {
+		*target = Up
+	}
+
 }
 
 func (g *GameStruct) Draw(win *pixelgl.Window) {

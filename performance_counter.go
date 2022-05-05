@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"time"
 
 	"github.com/inkyblackness/imgui-go"
@@ -19,9 +20,13 @@ type PerformanceCounter struct {
 	count         int
 
 	doingVsync bool
+
+	frame uint
 }
 
 func (pc *PerformanceCounter) DoCount() {
+	pc.frame++
+
 	elapsed := time.Since(pc.lastAddTime)
 
 	pc.lastFrameTime = float64(elapsed.Microseconds()) / 1000
@@ -50,6 +55,7 @@ func (pc *PerformanceCounter) PushFT(ft float64) {
 
 func (pc *PerformanceCounter) DrawUI() {
 	imgui.BeginV("Performance", &PerformanceShown, 0)
+	imgui.Text(fmt.Sprintf("Frame: %v", pc.frame))
 	imgui.Text(fmt.Sprintf("Frame Time (ms): %.2f", pc.ftSum/float64(pc.count)))
 	imgui.Text(fmt.Sprintf("FPS avg: %.2f", pc.fpsSum/float64(pc.count)))
 
@@ -61,6 +67,14 @@ func (pc *PerformanceCounter) DrawUI() {
 		pc.fpsSum = 0
 		pc.ftSum = 0
 	}
+
+	m := runtime.MemStats{}
+	runtime.ReadMemStats(&m)
+
+	imgui.Text(fmt.Sprintf("Frames per GC %.2f", float64(pc.frame)/float64(m.NumGC)))
+
+	imgui.Text(fmt.Sprintf("NumGC: %v", m.NumGC))
+	imgui.Text(fmt.Sprintf("GCCPU %%: %.2f", 100*m.GCCPUFraction))
 
 	imgui.End()
 
