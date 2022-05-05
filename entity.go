@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 type Entity struct {
@@ -28,9 +29,9 @@ type Entity struct {
 	clockActive bool
 }
 
-func (e *Entity) Draw(t pixel.Target) {
+func (e *Entity) Draw(t *pixelgl.Window, offset pixel.Vec) {
 
-	e.Sprite.Sprites[e.frameToRender].Draw(t, pixel.V(e.x, e.y), ImageScale)
+	e.Sprite.Sprites[e.frameToRender].DrawWorldPosition(t, pixel.V(e.x, e.y).Add(offset), ImageScale)
 }
 
 func (e *Entity) Update(se *scripts.ScriptEngine) error {

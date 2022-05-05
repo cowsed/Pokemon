@@ -5,6 +5,7 @@ import (
 	"log"
 	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
+	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -12,6 +13,11 @@ import (
 
 var Game GameStruct
 var logger *Logger
+var pc *PerformanceCounter = &PerformanceCounter{
+	lastAddTime:   time.Now(),
+	lastFPS:       -99,
+	lastFrameTime: -99,
+}
 
 func run() {
 	//Setup Window
@@ -32,17 +38,15 @@ func run() {
 	Game.win = win
 
 	//Initialize the game engine
+	Game.InitializeLogger()
+
 	Game.InitializeGraphics()
 	Game.InitializeGameUI()
 	Game.InitializeUI()
 
 	Game.InitializeScriptEngine()
 
-	logger = &Logger{
-		internal: "",
-	}
-	log.SetOutput(logger)
-	log.Println("Beginning log")
+	Game.LoadPlayer()
 
 	//Debug program
 	{
@@ -59,22 +63,28 @@ func run() {
 
 		TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/brendan.png", "Resources/Sprites/Builtin/brendan.json")
 		check(err)
+		TestEntity.x = 0
+		TestEntity.y = 0
 
 		Game.AddEntity("test_guy", TestEntity)
 
-		//OFficer
+		//Officer
 		var TestEntity2 = &Entity{
 			AttachedScript: nil,
 			Sprite:         nil,
 			frameToRender:  "down2",
 		}
 
-		scr2 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
+		scr2 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
 		scr2.Resume()
 		TestEntity2.AttachedScript = scr2
 
 		TestEntity2.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
 		check(err)
+		TestEntity.x = 9
+		TestEntity.y = 0
+		TestEntity.targetX = 9
+		TestEntity.targetY = 0
 
 		Game.AddEntity("test_guy2", TestEntity2)
 	}
@@ -92,6 +102,7 @@ func run() {
 				log.Printf("Error executing script of entity %s: %v\n", name, err.Error())
 			}
 		}
+		Game.player.Update()
 
 		//Draw
 		Game.DrawDebugUI()
@@ -100,6 +111,8 @@ func run() {
 		//Checks for window resizing and such
 		Game.CheckWindowUpdates()
 		win.Update()
+
+		pc.DoCount()
 	}
 
 }

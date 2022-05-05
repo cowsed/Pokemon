@@ -11,6 +11,7 @@ import (
 	_ "image/png"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 type SpriteGroup struct {
@@ -21,18 +22,30 @@ type FlippableSprite struct {
 	flip bool
 }
 
-func (f *FlippableSprite) Draw(win pixel.Target, location pixel.Vec, ImageScale float64) {
+func (f *FlippableSprite) DrawScreenPosition(win pixel.Target, screenLocation pixel.Vec, ImageScale float64) {
+	f.s.Draw(win, pixel.IM.Scaled(pixel.ZV, ImageScale).Moved(screenLocation))
+}
+func (f *FlippableSprite) DrawWorldPosition(win *pixelgl.Window, worldLocation pixel.Vec, ImageScale float64) {
 	scaleVec := pixel.V(1, 1)
 	if f.flip {
 		scaleVec.X = -1
 	}
 
+	middleX := win.Bounds().W() / 2
+	middleY := win.Bounds().H() / 2
+	middle := pixel.V(middleX, middleY)
 	//Calculate window position
 	//TODO revisit this. x should be centered. bottom of sprite is actually where it is so draw it there. Not actually sure
-	x := (location.X*16 + 8) * ImageScale
-	y := (location.Y*16 + f.s.Frame().H()/2) * ImageScale
+	//x is centered.
+	//y should be centered on the bottom 16. Here middle is 0
+	//if 20 pixels tall, middle of that is ten pixels up. difference is 2. Add 2
+	//if 32 pixels tall, middle is 16, difference is 8
+	middleSprite := f.s.Frame().H() / 2
+	offset := middleSprite - 6
+	x := (worldLocation.X * 16) * ImageScale
+	y := (worldLocation.Y*16 + offset) * ImageScale
 
-	f.s.Draw(win, pixel.IM.ScaledXY(pixel.V(0, 0), scaleVec.Scaled(ImageScale)).Moved(pixel.V(x, y)))
+	f.s.Draw(win, pixel.IM.ScaledXY(pixel.V(0, 0), scaleVec.Scaled(ImageScale)).Moved(pixel.V(x, y).Add(middle)))
 }
 
 type AnimationSheet struct {

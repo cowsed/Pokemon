@@ -6,19 +6,30 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 )
 
 type Environment interface {
-	Draw(win pixel.Target, at pixel.Vec)
+	Draw(win *pixelgl.Window, at pixel.Vec)
 }
 
 type ImageEnv struct {
 	sprite *pixel.Sprite
 }
 
-func (s *ImageEnv) Draw(win pixel.Target, at pixel.Vec) {
-	s.sprite.Draw(win, pixel.IM.Moved(s.sprite.Frame().Max.Scaled(.5)).Scaled(pixel.ZV, ImageScale).Moved(at))
+func (s *ImageEnv) Draw(win *pixelgl.Window, at pixel.Vec) {
+
+	middleX := win.Bounds().W() / 2
+	middleY := win.Bounds().H() / 2
+	screenMiddle := pixel.V(middleX, middleY)
+
+	spriteMiddle := s.sprite.Picture().Bounds().Size().Scaled(.5).Scaled(ImageScale)
+
+	unitMiddle := pixel.V(8*ImageScale, 8*ImageScale)
+
+	s.sprite.Draw(win, pixel.IM.Scaled(pixel.V(-1, -1), ImageScale).Moved(at.Add(screenMiddle).Add(spriteMiddle).Sub(unitMiddle)))
+
 }
 func NewImageEnvFromFile(path string) (*ImageEnv, error) {
 	img, err := loadImageImage(path)

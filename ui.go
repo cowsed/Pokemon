@@ -15,9 +15,11 @@ import (
 
 var NoteString string
 var ScriptDocsShown = false
+var PerformanceShown = true
 
 func (g *GameStruct) DrawDebugUI() {
 	g.ui.NewFrame()
+	pc.DrawUI()
 
 	imgui.Begin("Debug")
 
@@ -30,6 +32,11 @@ func (g *GameStruct) DrawDebugUI() {
 
 		imgui.EndTabItem()
 	}
+	if imgui.BeginTabItem("Player") {
+		g.drawPlayerUi()
+		imgui.EndTabItem()
+	}
+
 	if imgui.BeginTabItem("Active Scripts") {
 		drawScriptStatuses(g)
 		imgui.EndTabItem()
@@ -118,6 +125,10 @@ func drawScriptStatuses(g *GameStruct) {
 		}
 		imgui.TreePop()
 	}
+}
+
+func (g *GameStruct) drawPlayerUi() {
+	imgui.Text(fmt.Sprintf("%.2f x %.2f", g.player.x, g.player.y))
 }
 
 func getKeys(mem map[string]string) []string {
