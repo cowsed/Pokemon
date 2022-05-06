@@ -60,28 +60,29 @@ func run() {
 		Game.env, err = NewImageEnvFromFile("Resources/Environments/PalleteTown/ptown.png")
 		check(err)
 	}
+	//Debug entities
+	{
+		TestEntity = &Entity{
+			AttachedScript: nil,
+			Sprite:         nil,
+			frameToRender:  "down1",
+		}
+		TestEntity.x = float64(4)
+		TestEntity.y = float64(4)
+		TestEntity.targetX = float64(4)
+		TestEntity.targetY = float64(4)
 
-	TestEntity = &Entity{
-		AttachedScript: nil,
-		Sprite:         nil,
-		frameToRender:  "down1",
+		scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
+		scr1.Resume()
+		TestEntity.AttachedScript = scr1
+
+		TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+		check(err)
+
+		Game.AddEntity("guy", TestEntity)
 	}
-	TestEntity.x = float64(4)
-	TestEntity.y = float64(4)
-	TestEntity.targetX = float64(4)
-	TestEntity.targetY = float64(4)
-
-	scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
-	scr1.Resume()
-	TestEntity.AttachedScript = scr1
-
-	TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
-	check(err)
-
-	Game.AddEntity("guy", TestEntity)
 
 	pc.lastAddTime = time.Now()
-
 	//Game loop
 	for !win.Closed() {
 		//Handle Input
@@ -116,11 +117,15 @@ func run() {
 
 }
 func main() {
-	f, _ := os.Create("prof.pprof")
+	f, _ := os.Create("cpu.pprof")
+	f2, _ := os.Create("mem.pprof")
 	pprof.StartCPUProfile(f)
 	defer func() {
 		pprof.StopCPUProfile()
 		f.Close()
+		pprof.WriteHeapProfile(f2)
+		f2.Close()
+
 	}()
 
 	pixelgl.Run(run)

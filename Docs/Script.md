@@ -75,6 +75,30 @@ See addI
 
 See addI
 
+### addF
+```
+addF a b c
+```
+
+a and b can be variables or literals
+c must be a variable
+
+adds a + b and stores it to c
+
+Internally it casts the strings to float64s then adds then converts it back to a string to store.
+
+### subF
+
+See addF
+
+### mulF
+
+See addF
+
+### divF
+
+See addF
+
 
 ### jmpe
 
@@ -95,6 +119,8 @@ jmpne label a b
 ```
 
 Jump to label if a != b. a and b can be variables or literals
+
+
 
 ### goto
 

@@ -37,3 +37,14 @@ does the same thing as sayf but instead of going to the dialogue box goes to the
 clearmem
 ```
 resets everything in memory. does not overwrite special variables (.name, .x, .y)
+
+### show
+```
+show name
+```
+shows the entity specified by name. If it's already shown, this does nothing
+### hide
+```
+hid name
+```
+hides the entity specified by name. If it's already hidden, this does nothing

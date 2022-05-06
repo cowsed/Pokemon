@@ -78,7 +78,7 @@ func (e *Entity) HandleMovement() {
 	} else if deltaX != 0 { //Close enough to finish
 		//Back to normal position
 		dir := sign(deltaX)
-		directionName := []string{"left", "right"}[int(dir+1)/2]
+		directionName := []string{"right", "left"}[int(dir+1)/2]
 		e.frameToRender = directionName + "1"
 
 		//Snap to pixel perfect location
@@ -104,7 +104,7 @@ func (e *Entity) HandleMovement() {
 	} else if deltaY != 0 { //Close enough to finish
 		//Back to normal position
 		dir := sign(deltaY)
-		directionName := []string{"left", "right"}[int(dir+1)/2]
+		directionName := []string{"up", "down"}[int(dir+1)/2]
 		e.frameToRender = directionName + "1"
 
 		//Snap to pixel perfect location
