@@ -61,31 +61,26 @@ func run() {
 		check(err)
 	}
 
-	//Debug program
-	{
-		for y := 0; y < 2*60; y++ {
-			for x := 0; x < 2*80; x++ {
-				TestEntity = &Entity{
-					AttachedScript: nil,
-					Sprite:         nil,
-					frameToRender:  "down1",
-				}
-				TestEntity.x = float64(x)
-				TestEntity.y = float64(y)
-				TestEntity.targetX = float64(x)
-				TestEntity.targetY = float64(y)
-
-				scr1 := scripts.NewScriptFromFile("Resources/Scripts/math.ps")
-				scr1.Resume()
-				TestEntity.AttachedScript = scr1
-
-				TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
-				check(err)
-
-				Game.AddEntity(fmt.Sprintf("point(%v, %v)", x, y), TestEntity)
-			}
-		}
+	TestEntity = &Entity{
+		AttachedScript: nil,
+		Sprite:         nil,
+		frameToRender:  "down1",
 	}
+	TestEntity.x = float64(4)
+	TestEntity.y = float64(4)
+	TestEntity.targetX = float64(4)
+	TestEntity.targetY = float64(4)
+
+	scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
+	scr1.Resume()
+	TestEntity.AttachedScript = scr1
+
+	TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+	check(err)
+
+	Game.AddEntity("guy", TestEntity)
+
+	pc.lastAddTime = time.Now()
 
 	//Game loop
 	for !win.Closed() {

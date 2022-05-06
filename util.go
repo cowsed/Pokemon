@@ -6,7 +6,7 @@ func (g *GameStruct) UpdateSize() {
 
 	w := g.win.Bounds().Max.X - g.win.Bounds().Min.X
 	h := g.win.Bounds().Max.Y - g.win.Bounds().Min.Y
-	g.WordHandler.drawer.UpdateSize(w, h)
+	g.WordHandler.Drawer.UpdateSize(w, h)
 }
 
 func (g *GameStruct) CheckWindowUpdates() {

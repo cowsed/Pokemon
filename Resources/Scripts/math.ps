@@ -7,8 +7,8 @@ set $yn $y
 
 #"Scale x into plane"
 #"width 80 -> (-2, .47)"
-divF $xn 160 $xn
-mulF $xn 2.47 $xn
+divF $xn 120 $xn
+mulF $xn 6 $xn
 subF $xn 2 $xn
 
 #"Scale y into plane"
@@ -17,8 +17,8 @@ divF $yn 120 $yn
 mulF $yn 2 $yn
 subF $yn 1 $yn
 
-set $x0 $xn
-set $y0 $yn
+set $x0 -1.037
+set $y0 0.17
 
 #"Iterate -> if length > $radius jmp end -> yield -> goto startLoop"
 set $c 0

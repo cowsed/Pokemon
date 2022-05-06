@@ -1,4 +1,4 @@
-package main
+package ui
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ type DialogueHandler struct {
 	ListedText             string
 	Active                 bool
 	ActiveScript           *scripts.Script
-	drawer                 *TextDrawer
+	Drawer                 *TextDrawer
 }
 
 func (dh *DialogueHandler) HandleKey(button pixelgl.Button) {
@@ -42,8 +42,8 @@ func (dh *DialogueHandler) SetText(txt string, from *scripts.Script) {
 	dh.ActiveScript = from
 
 	dh.ListedText = txt
-	dh.drawer.text.Clear()
-	fmt.Fprint(dh.drawer.text, txt)
+	dh.Drawer.text.Clear()
+	fmt.Fprint(dh.Drawer.text, txt)
 
 	dh.Active = true
 	dh.WaitingForConfirmation = true
@@ -51,7 +51,7 @@ func (dh *DialogueHandler) SetText(txt string, from *scripts.Script) {
 func (dh *DialogueHandler) Draw(win *pixelgl.Window) {
 	if dh.Active {
 
-		dh.drawer.Draw(win)
+		dh.Drawer.Draw(win)
 	}
 }
 

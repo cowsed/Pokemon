@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	ui "pokemon/UI"
 	"sort"
 	"unicode"
 
@@ -205,11 +206,11 @@ func (g *GameStruct) InitializeGameUI() {
 	g.atlas = text.NewAtlas(basicfont.Face7x13, text.ASCII, text.RangeTable(unicode.Latin))
 
 	//Setup Bottom of the window dialogue text thing
-	Game.WordHandler = &DialogueHandler{
+	Game.WordHandler = &ui.DialogueHandler{
 		WaitingForConfirmation: false,
 		ListedText:             "",
 		Active:                 false,
-		drawer:                 NewTextDrawer(g.atlas, g.win.Bounds().Size().X, g.win.Bounds().Size().Y),
+		Drawer:                 ui.NewTextDrawer(g.atlas, g.win.Bounds().Size().X, g.win.Bounds().Size().Y),
 	}
 }
 

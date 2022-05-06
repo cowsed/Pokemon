@@ -6,6 +6,7 @@ import (
 
 	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
+	ui "pokemon/UI"
 
 	"github.com/dusk125/pixelui"
 	"github.com/faiface/pixel"
@@ -16,10 +17,10 @@ import (
 
 var TestEntity *Entity
 
-var ImageScale float64 = .2
+var ImageScale float64 = 5
 
 type GameStruct struct {
-	WordHandler *DialogueHandler
+	WordHandler *ui.DialogueHandler
 	atlas       *text.Atlas
 	win         *pixelgl.Window
 	ui          *pixelui.UI
@@ -142,4 +143,16 @@ func (g *GameStruct) InitializeLogger() {
 	}
 	log.SetOutput(logger)
 	log.Println("Beginning log")
+}
+
+type Logger struct {
+	internal string
+}
+
+func (l *Logger) Write(bs []byte) (int, error) {
+	l.internal += string(bs)
+	return len(bs), nil
+}
+func (l *Logger) String() string {
+	return l.internal
 }
