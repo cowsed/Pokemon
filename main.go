@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
+	"runtime/pprof"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -20,6 +22,8 @@ var pc *PerformanceCounter = &PerformanceCounter{
 	doingVsync:    true,
 }
 
+var UpdatesPerFrame = 1
+
 func run() {
 	//Setup Window
 	Game = GameStruct{
@@ -32,7 +36,7 @@ func run() {
 		Icon:      []pixel.Picture{},
 		Bounds:    pixel.R(0, 0, 1800, 900),
 		Resizable: true,
-		VSync:     true,
+		VSync:     pc.doingVsync,
 	}
 
 	win, err := pixelgl.NewWindow(cfg)
@@ -50,6 +54,13 @@ func run() {
 
 	Game.LoadPlayer()
 
+	//Debug environment
+	{
+
+		Game.env, err = NewImageEnvFromFile("Resources/Environments/PalleteTown/ptown.png")
+		check(err)
+	}
+
 	//Debug program
 	{
 		//Boy
@@ -65,8 +76,10 @@ func run() {
 
 		TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/brendan.png", "Resources/Sprites/Builtin/brendan.json")
 		check(err)
-		TestEntity.x = 0
-		TestEntity.y = 0
+		TestEntity.x = 3
+		TestEntity.y = 3
+		TestEntity.targetX = 3
+		TestEntity.targetY = 3
 
 		Game.AddEntity("test_guy", TestEntity)
 
@@ -77,16 +90,16 @@ func run() {
 			frameToRender:  "down2",
 		}
 
-		scr2 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
+		scr2 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
 		scr2.Resume()
 		TestEntity2.AttachedScript = scr2
 
 		TestEntity2.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
 		check(err)
 		TestEntity.x = 9
-		TestEntity.y = 0
+		TestEntity.y = 5
 		TestEntity.targetX = 9
-		TestEntity.targetY = 0
+		TestEntity.targetY = 5
 
 		Game.AddEntity("test_guy2", TestEntity2)
 	}
@@ -94,21 +107,25 @@ func run() {
 	//Game loop
 	for !win.Closed() {
 		//Handle Input
-		Game.HandleInput()
+		for i := 0; i < UpdatesPerFrame; i++ {
+			Game.HandleInput()
 
-		//Do Scripts
-		for _, name := range getActiveEntityNames(&Game) {
-			err = Game.ActiveEntites[name].Update(Game.ScriptEngine)
+			//Do Scripts
+			for _, name := range getActiveEntityNames(&Game) {
+				err = Game.ActiveEntites[name].Update(Game.ScriptEngine)
 
-			if err != nil {
-				log.Printf("Error executing script of entity %s: %v\n", name, err.Error())
+				if err != nil {
+					log.Printf("Error executing script of entity %s: %v\n", name, err.Error())
+				}
 			}
+			Game.player.Update()
 		}
-		Game.player.Update()
-
 		//Draw
-		Game.DrawDebugUI()
 		Game.Draw(win)
+
+		//Draw debug ui
+		Game.DrawDebugUI()
+		Game.ui.Draw(win)
 
 		//Checks for window resizing and such
 		Game.CheckWindowUpdates()
@@ -119,6 +136,12 @@ func run() {
 
 }
 func main() {
+	f, _ := os.Create("prof.pprof")
+	pprof.StartCPUProfile(f)
+	defer func() {
+		pprof.StopCPUProfile()
+		f.Close()
+	}()
 
 	pixelgl.Run(run)
 

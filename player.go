@@ -20,17 +20,18 @@ const (
 )
 
 var DirNames = [5]string{"None", "Left", "Right", "Up", "Down"}
+var speed = 3.0 / 60.0
 
 type Player struct {
-	spriteSheet      *graphics.SpriteGroup
+	spriteSheet *graphics.SpriteGroup
+	spriteName  string
+
 	x, y             float64
 	targetX, targetY int
 
 	currentDirection Direction
 	queuedDirection  Direction
 }
-
-var speed = 5.0 / 60.0
 
 func (p *Player) DrawUI() {
 	imgui.Text(fmt.Sprintf("pos: (%.2f, %.2f)", p.x, p.y))
@@ -142,26 +143,18 @@ func (p *Player) Update() {
 		p.queuedDirection = NoDirection
 	}
 
-	//targetY := int(p.y) + int(velY)
-	//if abs(p.y-float64(targetY)) < snapTolerance {
-	//	//Snap to place
-	//	p.y = float64(targetY)
-	//	p.currentDirection = NoDirection
-	//	//cycle through input buffer
-	//	p.currentDirection = p.queuedDirection
-	//	p.queuedDirection = NoDirection
-	//}
-	//targetY := int(p.y) + int(velY)
-	//if abs(p.y)-abs(float64(targetY)) < snapTolerance {
-	//	p.y = float64(targetY)
-	//	p.queuedDirection = NoDirection
-	//}
-
 }
 
 func (p *Player) Draw(win *pixelgl.Window) {
-	middleX := win.Bounds().W() / 2
-	middleY := win.Bounds().H() / 2
 
-	p.spriteSheet.Sprites["up1"].DrawScreenPosition(win, pixel.V(middleX, middleY+1.25*16), ImageScale)
+	m := abs((float64(p.targetY) - p.y) + (float64(p.targetX) - p.x))
+	suffixIndex := int(m*4) % 4
+	suffix := []string{"1", "2", "1", "3"}[suffixIndex]
+
+	//Frame code shamelessly stolen from entity - NoDirection will return the direction from the previous frame
+	dirName := []string{p.spriteName[:len(p.spriteName)-1], "left", "right", "up", "down"}[p.currentDirection]
+
+	p.spriteName = dirName + suffix
+
+	p.spriteSheet.Sprites[p.spriteName].DrawWorldPosition(win, pixel.ZV, ImageScale)
 }

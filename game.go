@@ -16,7 +16,7 @@ import (
 
 var TestEntity *Entity
 
-const ImageScale float64 = 5
+var ImageScale float64 = 5
 
 type GameStruct struct {
 	WordHandler *DialogueHandler
@@ -95,27 +95,21 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 	//Draw game ui
 	g.WordHandler.Draw(win)
 
-	//Draw debug ui
-	g.ui.Draw(win)
 }
 
 func (g *GameStruct) LoadPlayer() {
-	ss, err := graphics.LoadSprite("Resources/Sprites/Builtin/brendan.png", "Resources/Sprites/Builtin/brendan.json")
+	ss, err := graphics.LoadSprite("Resources/Sprites/Builtin/may.png", "Resources/Sprites/Builtin/may.json")
 	check(err)
 	g.player = &Player{
 		spriteSheet: ss,
 		x:           0,
 		y:           0,
+		spriteName:  "down1",
 	}
 }
 
 func (g *GameStruct) InitializeGraphics() {
 
-	var err error
-	g.env, err = NewImageEnvFromFile("/home/rich/SelfGaming/Pokemon/Resources/Environments/Grid/grid.png")
-	if err != nil {
-		panic(err)
-	}
 }
 
 func (g *GameStruct) InitializeScriptEngine() {

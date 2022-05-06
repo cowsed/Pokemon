@@ -54,13 +54,13 @@ func (e *Entity) Update(se *scripts.ScriptEngine) error {
 	return nil
 }
 func (e *Entity) HandleMovement() {
-	speed := .15
+	speed := 4.0 / 60.0
 
 	//X
 	deltaX := e.targetX - e.x
 	if abs(deltaX) > 1.0/16 { //If off by more than a pixel
 		dir := sign(deltaX)
-		e.x += dir * speed * 1.0 / 60.0
+		e.x += dir * speed
 
 		//Calculate sprite
 		//left foot - center - right foot - center
@@ -86,7 +86,7 @@ func (e *Entity) HandleMovement() {
 	deltaY := e.targetY - e.y
 	if abs(deltaY) > 1.0/16 { //If off by more than a pixel
 		dir := sign(deltaY)
-		e.y += dir * speed * 1.0 / 60.0
+		e.y += dir * speed
 
 		//Calculate sprite
 		//left foot - center - right foot - center

@@ -1,5 +1,9 @@
-Things to do:
-Sprite loading, displaying
-Tile loading, displaying
-Entity movement
-Camera Movement
+Environment with data
+Collisions
+Scripts
+
+Combined Loading:
+    Scripts
+    Environment
+
+premature optimization

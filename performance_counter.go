@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"runtime"
 	"time"
 
 	"github.com/inkyblackness/imgui-go"
@@ -23,6 +22,8 @@ type PerformanceCounter struct {
 	SlowDown   bool
 
 	frame uint
+
+	gofast bool
 }
 
 func (pc *PerformanceCounter) DoCount() {
@@ -71,13 +72,12 @@ func (pc *PerformanceCounter) DrawUI() {
 
 	imgui.Checkbox("Slow down", &pc.SlowDown)
 
-	m := runtime.MemStats{}
-	runtime.ReadMemStats(&m)
-
-	imgui.Text(fmt.Sprintf("Frames per GC %.2f", float64(pc.frame)/float64(m.NumGC)))
-
-	imgui.Text(fmt.Sprintf("NumGC: %v", m.NumGC))
-	imgui.Text(fmt.Sprintf("GCCPU %%: %.2f", 100*m.GCCPUFraction))
+	imgui.Checkbox("Turbo", &pc.gofast)
+	if pc.gofast {
+		UpdatesPerFrame = 20
+	} else {
+		UpdatesPerFrame = 1
+	}
 
 	imgui.End()
 

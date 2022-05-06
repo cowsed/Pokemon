@@ -32,13 +32,20 @@ func (g *GameStruct) DrawDebugUI() {
 
 		imgui.EndTabItem()
 	}
+	if imgui.BeginTabItem("Render Settings") {
+		s := float32(ImageScale)
+		imgui.DragFloatV("Scale", &s,0.05,0.001,20,"%.2f",1)
+		ImageScale = float64(s)
+		imgui.EndTabItem()
+	}
+
 	if imgui.BeginTabItem("Player") {
 		g.drawPlayerUi()
 		g.player.DrawUI()
 		imgui.EndTabItem()
 	}
 
-	if imgui.BeginTabItem("Active Scripts") {
+	if imgui.BeginTabItem("Active Entities") {
 		drawScriptStatuses(g)
 		imgui.EndTabItem()
 	}

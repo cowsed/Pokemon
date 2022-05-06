@@ -15,9 +15,9 @@
             "Flip": false
         },
         "down3": {
-            "Minx": 107,
+            "Minx": 106,
             "Miny": 0,
-            "Maxx": 121,
+            "Maxx": 120,
             "Maxy": 20,
             "Flip": false
         },
@@ -58,9 +58,9 @@
             "Flip": true
         },
         "right3": {
-            "Minx": 91,
+            "Minx": 90,
             "Miny": 0,
-            "Maxx": 105,
+            "Maxx": 104,
             "Maxy": 20,
             "Flip": true
         },
@@ -79,9 +79,9 @@
             "Flip": false
         },
         "up3": {
-            "Minx": 123,
+            "Minx": 122,
             "Miny": 0,
-            "Maxx": 137,
+            "Maxx": 136,
             "Maxy": 20,
             "Flip": false
         }
