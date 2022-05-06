@@ -110,8 +110,8 @@ func (s *Script) MakeHumanReadable(sh *ScriptEngine) string {
 		if functionName == "" {
 			continue
 		}
-		if functionName == "END" {
-			sourceText += line + "\n"
+		if functionName == "END" || functionName == "yield" {
+			sourceText += functionName + "\n"
 			continue
 		}
 		line += functionName

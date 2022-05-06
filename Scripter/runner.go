@@ -12,11 +12,19 @@ type ScriptEngine struct {
 func NewDefaultScriptEngine() *ScriptEngine {
 	sh := ScriptEngine{
 		RegisteredFunctions: map[string]ScriptFunction{
-			"set":   SetFunction,
-			"addI":  AddIFunction,
-			"subI":  SubIFunction,
-			"mulI":  MulIFunction,
-			"divI":  DivIFunction,
+			"set":  SetFunction,
+			"addI": AddIFunction,
+			"subI": SubIFunction,
+			"mulI": MulIFunction,
+			"divI": DivIFunction,
+
+			"addF": AddFFunction,
+			"subF": SubFFunction,
+			"mulF": MulFFunction,
+			"divF": DivFFunction,
+
+			"castI": CastIFunction,
+
 			"goto":  GotoFunc,
 			"jmpe":  JmpeFunc,
 			"jmpne": JmpneFunc,
@@ -63,6 +71,9 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 			stopScript = true
 			continue
 		}
+		if action == "yield" {
+			return nil
+		}
 
 		f, ok := scr.RegisteredFunctions[action]
 		if !ok {
@@ -85,7 +96,7 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 		}
 		//Call the function
 		err := f.Function(args, script, scr)
-		if err!=nil{
+		if err != nil {
 			script.Pause()
 			return err
 		}

@@ -133,6 +133,134 @@ var DivIFunction = ScriptFunction{
 	Docstring: "divI a, b, c	:	divides a/b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
 }
 
+var AddFFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.ParseFloat(a, 64)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.ParseFloat(b, 64)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal + bVal
+
+		script.internalSet(c, strconv.FormatFloat(cVal, 'g', 8, 64))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "addF a, b, c	:	adds a+b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+var SubFFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.ParseFloat(a, 64)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.ParseFloat(b, 64)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal - bVal
+
+		script.internalSet(c, strconv.FormatFloat(cVal, 'g', 8, 64))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "subF a, b, c	:	adds a+b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+
+var MulFFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.ParseFloat(a, 64)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.ParseFloat(b, 64)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal * bVal
+
+		script.internalSet(c, strconv.FormatFloat(cVal, 'g', 8, 64))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "mulF a, b, c	:	adds a+b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+
+var DivFFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		bTok := args[1]
+		c := args[2]
+
+		a := script.ParseValue(aTok)
+		b := script.ParseValue(bTok)
+		aVal, err := strconv.ParseFloat(a, 64)
+
+		if err != nil {
+			return nil
+		}
+		bVal, err := strconv.ParseFloat(b, 64)
+
+		if err != nil {
+			return nil
+		}
+
+		cVal := aVal + bVal
+
+		script.internalSet(c, strconv.FormatFloat(cVal, 'g', 8, 64))
+		return nil
+	},
+	NumArguments: 3,
+	Docstring: "divF a, b, c	:	adds a+b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
+}
+var CastIFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		a := script.ParseValue(aTok)
+		f, err := strconv.ParseFloat(a, 64)
+		if err != nil {
+			return err
+		}
+		i := int(f)
+		bTok := args[1] //location to store location
+		script.internalSet(bTok, strconv.FormatInt(int64(i), 10))
+
+		return nil
+	},
+	NumArguments: 2,
+	Docstring: "castI a,b	:	Casts the value a to an int and stores it to b. a can be a variable or literal. b must be a variable name",
+}
+
 var GotoFunc = ScriptFunction{
 	NumArguments: 1,
 	Function: func(args []string, script *Script, scr *ScriptEngine) error {
