@@ -16,7 +16,7 @@ import (
 
 var TestEntity *Entity
 
-var ImageScale float64 = 5
+var ImageScale float64 = .2
 
 type GameStruct struct {
 	WordHandler *DialogueHandler
@@ -102,7 +102,7 @@ func (g *GameStruct) LoadPlayer() {
 	check(err)
 	g.player = &Player{
 		spriteSheet: ss,
-		x:           0,
+		x:           2,
 		y:           0,
 		spriteName:  "down1",
 	}
@@ -125,6 +125,9 @@ func (g *GameStruct) InitializeScriptEngine() {
 	g.ScriptEngine.RegisterFunction("setpos", SetPosFunction)
 	g.ScriptEngine.RegisterFunction("movx", MovXFunction)
 	g.ScriptEngine.RegisterFunction("movy", MovYFunction)
+	g.ScriptEngine.RegisterFunction("getpos", GetPosFunction)
+	g.ScriptEngine.RegisterFunction("hide", HideFunction)
+	g.ScriptEngine.RegisterFunction("show", ShowFunction)
 
 }
 func (g *GameStruct) AddEntity(name string, E *Entity) {

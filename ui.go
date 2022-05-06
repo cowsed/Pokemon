@@ -34,7 +34,7 @@ func (g *GameStruct) DrawDebugUI() {
 	}
 	if imgui.BeginTabItem("Render Settings") {
 		s := float32(ImageScale)
-		imgui.DragFloatV("Scale", &s,0.05,0.001,20,"%.2f",1)
+		imgui.DragFloatV("Scale", &s, 0.05, 0.001, 20, "%.2f", 1)
 		ImageScale = float64(s)
 		imgui.EndTabItem()
 	}
@@ -71,6 +71,12 @@ var selectedEntity string //String id into map
 
 func drawScriptStatuses(g *GameStruct) {
 	//Selected Script Info
+
+	if imgui.Button("Reset all") {
+		for _, v := range g.ActiveEntites {
+			v.AttachedScript.Restart()
+		}
+	}
 
 	if selectedEntity != "" {
 		entity := g.ActiveEntites[selectedEntity]

@@ -23,11 +23,13 @@ func NewDefaultScriptEngine() *ScriptEngine {
 			"mulF": MulFFunction,
 			"divF": DivFFunction,
 
+			"sqrtF": SqrtFFunction,
 			"castI": CastIFunction,
 
 			"goto":  GotoFunc,
 			"jmpe":  JmpeFunc,
 			"jmpne": JmpneFunc,
+			"jmpl":  JmpLessFunc,
 			"call":  CallFunc,
 			"ret":   RetFunc,
 		},
@@ -73,6 +75,10 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 		}
 		if action == "yield" {
 			return nil
+		}
+		//Comment
+		if action[0:1] == "#" {
+			continue
 		}
 
 		f, ok := scr.RegisteredFunctions[action]

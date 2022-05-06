@@ -27,10 +27,14 @@ type Entity struct {
 	clockStart  time.Time
 	clockTime   time.Duration
 	clockActive bool
+
+	hidden bool
 }
 
 func (e *Entity) Draw(t *pixelgl.Window, offset pixel.Vec) {
-
+	if e.hidden {
+		return
+	}
 	e.Sprite.Sprites[e.frameToRender].DrawWorldPosition(t, pixel.V(e.x, e.y).Add(offset), ImageScale)
 }
 
@@ -51,7 +55,7 @@ func (e *Entity) Update(se *scripts.ScriptEngine) error {
 	//Update position X
 	e.HandleMovement()
 
-	return nil
+	return err
 }
 func (e *Entity) HandleMovement() {
 	speed := 4.0 / 60.0

@@ -63,45 +63,28 @@ func run() {
 
 	//Debug program
 	{
-		//Boy
-		TestEntity = &Entity{
-			AttachedScript: nil,
-			Sprite:         nil,
-			frameToRender:  "down1",
+		for y := 0; y < 2*60; y++ {
+			for x := 0; x < 2*80; x++ {
+				TestEntity = &Entity{
+					AttachedScript: nil,
+					Sprite:         nil,
+					frameToRender:  "down1",
+				}
+				TestEntity.x = float64(x)
+				TestEntity.y = float64(y)
+				TestEntity.targetX = float64(x)
+				TestEntity.targetY = float64(y)
+
+				scr1 := scripts.NewScriptFromFile("Resources/Scripts/math.ps")
+				scr1.Resume()
+				TestEntity.AttachedScript = scr1
+
+				TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+				check(err)
+
+				Game.AddEntity(fmt.Sprintf("point(%v, %v)", x, y), TestEntity)
+			}
 		}
-
-		scr1 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
-		scr1.Resume()
-		TestEntity.AttachedScript = scr1
-
-		TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/brendan.png", "Resources/Sprites/Builtin/brendan.json")
-		check(err)
-		TestEntity.x = 3
-		TestEntity.y = 3
-		TestEntity.targetX = 3
-		TestEntity.targetY = 3
-
-		Game.AddEntity("test_guy", TestEntity)
-
-		//Officer
-		var TestEntity2 = &Entity{
-			AttachedScript: nil,
-			Sprite:         nil,
-			frameToRender:  "down2",
-		}
-
-		scr2 := scripts.NewScriptFromFile("Resources/Scripts/math.ps")
-		scr2.Resume()
-		TestEntity2.AttachedScript = scr2
-
-		TestEntity2.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
-		check(err)
-		TestEntity.x = 9
-		TestEntity.y = 5
-		TestEntity.targetX = 9
-		TestEntity.targetY = 5
-
-		Game.AddEntity("test_guy2", TestEntity2)
 	}
 
 	//Game loop
@@ -111,11 +94,13 @@ func run() {
 			Game.HandleInput()
 
 			//Do Scripts
-			for _, name := range getActiveEntityNames(&Game) {
-				err = Game.ActiveEntites[name].Update(Game.ScriptEngine)
+			//for _, name := range getActiveEntityNames(&Game) {
+			for name, e := range Game.ActiveEntites {
+
+				err = e.Update(Game.ScriptEngine)
 
 				if err != nil {
-					log.Printf("Error executing script of entity %s: %v\n", name, err.Error())
+					log.Printf("Error executing script of entity '%s': %v\n", name, err.Error())
 				}
 			}
 			Game.player.Update()
@@ -156,3 +141,45 @@ func check(err error) {
 		panic(err)
 	}
 }
+
+/*
+	//Boy
+	TestEntity = &Entity{
+		AttachedScript: nil,
+		Sprite:         nil,
+		frameToRender:  "down1",
+	}
+	TestEntity.x = 9
+	TestEntity.y = 3
+	TestEntity.targetX = 9
+	TestEntity.targetY = 3
+
+	scr1 := scripts.NewScriptFromFile("Resources/Scripts/spin.ps")
+	scr1.Resume()
+	TestEntity.AttachedScript = scr1
+
+	TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/brendan.png", "Resources/Sprites/Builtin/brendan.json")
+	check(err)
+
+	Game.AddEntity("test_guy", TestEntity)
+
+	//Officer
+	var TestEntity2 = &Entity{
+		AttachedScript: nil,
+		Sprite:         nil,
+		frameToRender:  "down2",
+	}
+	TestEntity.x = 3
+	TestEntity.y = 3
+	TestEntity.targetX = 3
+	TestEntity.targetY = 3
+
+	scr2 := scripts.NewScriptFromFile("Resources/Scripts/math.ps")
+	TestEntity2.AttachedScript = scr2
+	scr2.Resume()
+
+	TestEntity2.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+	check(err)
+
+	Game.AddEntity("test_guy2", TestEntity2)
+*/

@@ -95,7 +95,7 @@ func (s *Script) Status() string {
 	if s.paused {
 		str = "Waiting For Events"
 	}
-	return fmt.Sprintf(str+" - PC: %v", s.index)
+	return fmt.Sprintf(str+" - PC: %v/%v", s.index, len(s.src))
 }
 
 func (s *Script) MakeHumanReadable(sh *ScriptEngine) string {
@@ -110,7 +110,7 @@ func (s *Script) MakeHumanReadable(sh *ScriptEngine) string {
 		if functionName == "" {
 			continue
 		}
-		if functionName == "END" || functionName == "yield" {
+		if functionName == "END" || functionName == "yield" || functionName[0:1] == "#" {
 			sourceText += functionName + "\n"
 			continue
 		}

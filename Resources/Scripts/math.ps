@@ -1,14 +1,80 @@
-clearmem
-set $x 2
-start:
-addF $x 1.333 $x
-castI $x $y
+getpos $.name $x $y
+
+show $.name
+
+set $xn $x
+set $yn $y
+
+#"Scale x into plane"
+#"width 80 -> (-2, .47)"
+divF $xn 160 $xn
+mulF $xn 2.47 $xn
+subF $xn 2 $xn
+
+#"Scale y into plane"
+#"height 60 -> (-1.12, 1.12)"
+divF $yn 120 $yn
+mulF $yn 2 $yn
+subF $yn 1 $yn
+
+set $x0 $xn
+set $y0 $yn
+
+#"Iterate -> if length > $radius jmp end -> yield -> goto startLoop"
+set $c 0
+set $n 1000
+set $radius 10
+
+
+startLoop:
+#"Finish if outside radius - radius < length"
+call length
+jmpl hideLabel $radius $length
+
+#"Iterate"
+call iterate
+
 yield
-goto start
+
+
+#"Loop control"
+addI $c 1 $c
+#"Jump back if c < n"
+jmpl startLoop $c $n
+
 
 END
 
-iterateComplex:
 
 
+endLabel:
+END
+
+hideLabel:
+hide $.name
+END
+
+
+
+iterate:
+mulF $xn $xn $xn2
+mulF $yn $yn $yn2
+subF $xn2 $yn2 $xt
+addF $xt $x0 $xt  
+
+mulF $xn $yn $yn
+mulF $yn 2 $yn
+addF $yn $y0 $yn
+
+set $xn $xt
+
+ret
+
+
+#"sets $length to the distance from the origin"
+length:
+mulF $yn $yn $yn2
+mulF $xn $xn $xn2
+addF $yn2 $xn2 $s
+sqrtF $s $length
 ret

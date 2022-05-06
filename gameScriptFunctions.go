@@ -148,7 +148,7 @@ var SetPosFunction scripts.ScriptFunction = scripts.ScriptFunction{
 var MovXFunction = scripts.ScriptFunction{
 	NumArguments: 2,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
-		
+
 		who := script.ParseValue(args[0])
 		newXStr := args[1]
 		newX, err := strconv.ParseFloat(newXStr, 64)
@@ -156,15 +156,14 @@ var MovXFunction = scripts.ScriptFunction{
 		if err != nil {
 			return err
 		}
-		if _, ok:=Game.ActiveEntites[who]; !ok{
+		if _, ok := Game.ActiveEntites[who]; !ok {
 			return fmt.Errorf("no entity named %s", who)
 		}
 
 		//Already there
-		if Game.ActiveEntites[who].targetX == newX{
+		if Game.ActiveEntites[who].targetX == newX {
 			return nil
 		}
-
 
 		Game.ActiveEntites[who].targetX = newX
 		Game.ActiveEntites[who].AttachedScript.Pause()
@@ -179,7 +178,7 @@ var MovXFunction = scripts.ScriptFunction{
 var MovYFunction = scripts.ScriptFunction{
 	NumArguments: 2,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
-		
+
 		who := script.ParseValue(args[0])
 		newYStr := args[1]
 		newY, err := strconv.ParseFloat(newYStr, 64)
@@ -187,12 +186,12 @@ var MovYFunction = scripts.ScriptFunction{
 		if err != nil {
 			return err
 		}
-		if _, ok:=Game.ActiveEntites[who]; !ok{
+		if _, ok := Game.ActiveEntites[who]; !ok {
 			return fmt.Errorf("no entity named %s", who)
 		}
 
 		//Already there
-		if Game.ActiveEntites[who].targetY == newY{
+		if Game.ActiveEntites[who].targetY == newY {
 			return nil
 		}
 		Game.ActiveEntites[who].targetY = newY
@@ -202,4 +201,59 @@ var MovYFunction = scripts.ScriptFunction{
 	},
 
 	Docstring: "movy who target : moves the sprite specified to the location in the y direction",
+}
+
+//movx who tx
+var GetPosFunction = scripts.ScriptFunction{
+	NumArguments: 3,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+
+		who := script.ParseValue(args[0])
+		xLoc := args[1]
+		yLoc := args[2]
+		script.SetMemory(xLoc[1:], fmt.Sprint(Game.ActiveEntites[who].x))
+		script.SetMemory(yLoc[1:], fmt.Sprint(Game.ActiveEntites[who].y))
+
+		return nil
+	},
+
+	Docstring: "get who x y : stores the x and y values of the entity who in to memory locations called x and y",
+}
+
+//hide who
+var HideFunction = scripts.ScriptFunction{
+	NumArguments: 1,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+
+		who := script.ParseValue(args[0])
+
+		if _, ok := Game.ActiveEntites[who]; !ok {
+			return fmt.Errorf("no entity named %s", who)
+		}
+
+		Game.ActiveEntites[who].hidden = true
+
+		return nil
+	},
+
+	Docstring: "hide who : hides the sprite specified ",
+}
+
+//hide who
+var ShowFunction = scripts.ScriptFunction{
+	NumArguments: 1,
+	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
+
+		who := script.ParseValue(args[0])
+
+		if _, ok := Game.ActiveEntites[who]; !ok {
+			return fmt.Errorf("no entity named %s", who)
+		}
+
+		Game.ActiveEntites[who].hidden = false
+
+		return nil
+	},
+
+	Docstring: "hide who : hides the sprite specified ",
 }

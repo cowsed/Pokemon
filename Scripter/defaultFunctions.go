@@ -1,6 +1,7 @@
 package scripts
 
 import (
+	"math"
 	"strconv"
 )
 
@@ -34,12 +35,12 @@ var AddIFunction = ScriptFunction{
 		aVal, err := strconv.Atoi(a)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.Atoi(b)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal + bVal
@@ -62,12 +63,12 @@ var SubIFunction = ScriptFunction{
 		aVal, err := strconv.Atoi(a)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.Atoi(b)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal - bVal
@@ -89,12 +90,12 @@ var MulIFunction = ScriptFunction{
 		aVal, err := strconv.Atoi(a)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.Atoi(b)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal * bVal
@@ -116,12 +117,12 @@ var DivIFunction = ScriptFunction{
 		aVal, err := strconv.Atoi(a)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.Atoi(b)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal / bVal
@@ -144,12 +145,12 @@ var AddFFunction = ScriptFunction{
 		aVal, err := strconv.ParseFloat(a, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.ParseFloat(b, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal + bVal
@@ -171,12 +172,12 @@ var SubFFunction = ScriptFunction{
 		aVal, err := strconv.ParseFloat(a, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.ParseFloat(b, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal - bVal
@@ -199,12 +200,12 @@ var MulFFunction = ScriptFunction{
 		aVal, err := strconv.ParseFloat(a, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.ParseFloat(b, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		cVal := aVal * bVal
@@ -227,15 +228,15 @@ var DivFFunction = ScriptFunction{
 		aVal, err := strconv.ParseFloat(a, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 		bVal, err := strconv.ParseFloat(b, 64)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
-		cVal := aVal + bVal
+		cVal := aVal / bVal
 
 		script.internalSet(c, strconv.FormatFloat(cVal, 'g', 8, 64))
 		return nil
@@ -243,6 +244,28 @@ var DivFFunction = ScriptFunction{
 	NumArguments: 3,
 	Docstring: "divF a, b, c	:	adds a+b stores the value to c. a and b can be $ variables or constant values. c must be a variable",
 }
+
+var SqrtFFunction = ScriptFunction{
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+		aTok := args[0]
+		c := args[1]
+
+		a := script.ParseValue(aTok)
+		aVal, err := strconv.ParseFloat(a, 64)
+
+		if err != nil {
+			return err
+		}
+
+		cVal := math.Sqrt(aVal)
+
+		script.internalSet(c, strconv.FormatFloat(cVal, 'g', 8, 64))
+		return nil
+	},
+	NumArguments: 2,
+	Docstring: "sqrtF a, b	:	sqrts(a) stores the value to b. a can be $ variables or constant values. b must be a variable",
+}
+
 var CastIFunction = ScriptFunction{
 	Function: func(args []string, script *Script, scr *ScriptEngine) error {
 		aTok := args[0]
@@ -287,6 +310,32 @@ var JmpeFunc = ScriptFunction{
 		return err
 	},
 	Docstring: "jmpe lbl, a, b	:	goes to label if a == b. a and b can be variables with $ or constant values",
+}
+
+var JmpLessFunc = ScriptFunction{
+	NumArguments: 3,
+	Function: func(args []string, script *Script, scr *ScriptEngine) error {
+
+		lbl := args[0]
+
+		a := script.ParseValue(args[1])
+		b := script.ParseValue(args[2])
+
+		aVal, err := strconv.ParseFloat(a, 64)
+		if err != nil {
+			return err
+		}
+		bVal, err := strconv.ParseFloat(b, 64)
+		if err != nil {
+			return err
+		}
+
+		if aVal < bVal {
+			err = script.Goto(lbl)
+		}
+		return err
+	},
+	Docstring: "jmpl lbl, a, b	:	goes to label if a < b. a and b can be variables with $ or constant values of any numerical value",
 }
 
 var JmpneFunc = ScriptFunction{
