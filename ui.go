@@ -18,6 +18,8 @@ var NoteString string
 var ScriptDocsShown = false
 var PerformanceShown = true
 
+var showCollisionOverlay = true
+
 func (g *GameStruct) DrawDebugUI() {
 	g.ui.NewFrame()
 	pc.DrawUI()
@@ -33,9 +35,11 @@ func (g *GameStruct) DrawDebugUI() {
 
 		imgui.EndTabItem()
 	}
-	if imgui.BeginTabItem("Render Settings") {
+
+	if imgui.BeginTabItemV("Render Settings", nil, 0) {
 		s := float32(ImageScale)
 		imgui.DragFloatV("Scale", &s, 0.05, 0.001, 20, "%.2f", 1)
+		imgui.Checkbox("Show Collision Overlay", &showCollisionOverlay)
 		ImageScale = float64(s)
 		imgui.EndTabItem()
 	}

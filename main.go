@@ -32,15 +32,17 @@ func run() {
 	}
 
 	cfg := pixelgl.WindowConfig{
-		Title:     "In Dev",
-		Icon:      []pixel.Picture{},
-		Bounds:    pixel.R(0, 0, 1800, 900),
-		Resizable: true,
-		VSync:     pc.doingVsync,
+		Title:                  "In Dev",
+		Icon:                   []pixel.Picture{},
+		Bounds:                 pixel.R(0, 0, 1800, 900),
+		Resizable:              true,
+		VSync:                  pc.doingVsync,
+		TransparentFramebuffer: true,
 	}
 
 	win, err := pixelgl.NewWindow(cfg)
 	check(err)
+	win.SetComposeMethod(pixel.ComposeOver)
 	Game.win = win
 
 	//Initialize the game engine
@@ -67,6 +69,7 @@ func run() {
 			Sprite:         nil,
 			frameToRender:  "down1",
 		}
+
 		TestEntity.x = float64(4)
 		TestEntity.y = float64(4)
 		TestEntity.targetX = float64(4)
@@ -82,6 +85,10 @@ func run() {
 		Game.AddEntity("guy", TestEntity)
 	}
 
+	Game.CurrentScene = &Scene{
+		Env:      &TiledEnvironment{},
+		Entities: map[string]Entity{},
+	}
 	pc.lastAddTime = time.Now()
 	//Game loop
 	for !win.Closed() {
@@ -90,7 +97,6 @@ func run() {
 			Game.HandleInput()
 
 			//Do Scripts
-			//for _, name := range getActiveEntityNames(&Game) {
 			for name, e := range Game.ActiveEntites {
 
 				err = e.Update(Game.ScriptEngine)

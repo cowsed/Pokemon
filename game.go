@@ -31,6 +31,8 @@ type GameStruct struct {
 
 	ScriptEngine  *scripts.ScriptEngine
 	ActiveEntites map[string]*Entity
+
+	CurrentScene *Scene
 }
 
 func (g *GameStruct) HandleInput() {
@@ -38,28 +40,20 @@ func (g *GameStruct) HandleInput() {
 		v := g.win.MousePosition()
 		log.Println("Clicky", v)
 	}
-	if g.ui.JustPressed(pixelgl.KeyEnter) {
-		g.WordHandler.HandleKey(pixelgl.KeyEnter)
+	if g.ui.JustPressed(pixelgl.KeySpace) {
+		g.WordHandler.HandleKey(pixelgl.KeySpace)
 	}
 
-	if g.ui.Pressed(pixelgl.KeyLeft) {
-		g.player.HandleInput(Left)
-	}
-	if g.ui.Pressed(pixelgl.KeyRight) {
-		g.player.HandleInput(Right)
-	}
-	if g.ui.Pressed(pixelgl.KeyDown) {
-		g.player.HandleInput(Down)
-	}
-	if g.ui.Pressed(pixelgl.KeyUp) {
-		g.player.HandleInput(Up)
-	}
+	g.player.HandleAllInput()
 
 }
 
 func (g *GameStruct) Draw(win *pixelgl.Window) {
-	win.Clear(color.Gray{
-		Y: 80,
+	win.Clear(pixel.RGBA{
+		R: .3,
+		G: .3,
+		B: .3,
+		A: 1,
 	})
 
 	playerPos := pixel.V(g.player.x, g.player.y)
@@ -68,6 +62,9 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 	//Draw environment
 	g.env.Draw(win, cameraPosScreenSpace)
 
+	if showCollisionOverlay {
+		g.CurrentScene.Env.DrawCollisions(win, cameraPosScreenSpace.Add(win.Bounds().Center()).Sub(pixel.V(7*ImageScale, 7*ImageScale)))
+	}
 	//Draw entities
 	for _, name := range getActiveEntityNames(g) {
 		g.ActiveEntites[name].Draw(win, playerPos.Scaled(-1))
@@ -85,12 +82,13 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 			B: 255,
 			A: 60,
 		}
-		//d.SetMatrix(pixel.IM.Moved(pixel.V(e.x, e.y)))
+
 		d.Push(pixel.V((e.x+.5)*16*ImageScale, (e.y+.5)*16*ImageScale).Sub(playerPos.Scaled(16 * ImageScale)))
 		d.Circle(70, 10)
 
 		d.Draw(win)
 	}
+
 	g.player.Draw(win)
 
 	//Draw game ui
@@ -103,8 +101,8 @@ func (g *GameStruct) LoadPlayer() {
 	check(err)
 	g.player = &Player{
 		spriteSheet: ss,
-		x:           2,
-		y:           0,
+		x:           4,
+		y:           2,
 		spriteName:  "down1",
 	}
 }

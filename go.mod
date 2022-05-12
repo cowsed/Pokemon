@@ -1,6 +1,6 @@
 module pokemon
 
-go 1.18
+go 1.17
 
 require (
 	github.com/dusk125/pixelui v0.1.0
