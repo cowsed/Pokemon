@@ -43,6 +43,11 @@ var DialogueFunction scripts.ScriptFunction = scripts.ScriptFunction{
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
 		txt := args[0]
 		Game.WordHandler.SetText(txt, script)
+		Game.lastInputHandle = Game.InputHandleFunc
+		Game.InputHandleFunc = Game.WordHandler.HandleAllInput
+		Game.WordHandler.OnClose = func() {
+			Game.InputHandleFunc = Game.lastInputHandle
+		}
 		script.Pause()
 		return nil
 	},
@@ -63,7 +68,11 @@ var DialogueFFunction scripts.ScriptFunction = scripts.ScriptFunction{
 
 		//Update text
 		Game.WordHandler.SetText(txt, script)
-
+		Game.lastInputHandle = Game.InputHandleFunc
+		Game.InputHandleFunc = Game.WordHandler.HandleAllInput
+		Game.WordHandler.OnClose = func() {
+			Game.InputHandleFunc = Game.lastInputHandle
+		}
 		script.Pause()
 		return nil
 	},

@@ -69,8 +69,10 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 
 		//End if necessary
 		if action == "END" {
+			script.End()
 			script.Pause()
 			stopScript = true
+
 			continue
 		}
 		if action == "yield" {

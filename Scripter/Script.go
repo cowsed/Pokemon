@@ -25,6 +25,7 @@ type Script struct {
 	index  int
 	labels map[string]int
 	paused bool
+	ended  bool
 	memory map[string]string
 	stack  *Stack
 }
@@ -49,6 +50,7 @@ func NewScript(src string) *Script {
 		index:  0,
 		labels: map[string]int{},
 		paused: false,
+		ended:  false,
 		memory: map[string]string{},
 		stack:  NewStack(),
 	}
@@ -78,9 +80,14 @@ func (s *Script) Resume() {
 func (s *Script) Pause() {
 	s.paused = true
 }
+
 func (s *Script) Restart() {
 	s.paused = false
+	s.ended = false
 	s.index = 0
+}
+func (s *Script) End() {
+	s.ended = true
 }
 
 func (s *Script) SetMemory(key, value string) {
@@ -95,7 +102,14 @@ func (s *Script) Status() string {
 	if s.paused {
 		str = "Waiting For Events"
 	}
+	if s.ended {
+		str += "  -  finished"
+	}
 	return fmt.Sprintf(str+" - PC: %v/%v", s.index, len(s.src))
+}
+func (s *Script) HasLabel(lbl string) bool {
+	_, inmap := s.labels[lbl]
+	return inmap
 }
 
 func (s *Script) MakeHumanReadable(sh *ScriptEngine) string {
@@ -154,6 +168,27 @@ func (s *Script) Goto(lbl string) error {
 		return fmt.Errorf("no label called %s", lbl)
 	}
 	s.index = val
+	if s.ended {
+		s.ended = false
+		s.paused = false
+	}
+
+	return nil
+}
+
+func (s *Script) Call(lbl string) error {
+	val, ok := s.labels[lbl]
+	if !ok {
+		return fmt.Errorf("no label called %s", lbl)
+	}
+	s.stack.Push(s.index)
+	s.index = val
+
+	if s.ended {
+		s.ended = false
+		s.paused = false
+	}
+
 	return nil
 }
 

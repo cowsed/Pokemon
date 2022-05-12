@@ -20,6 +20,7 @@ type Entity struct {
 	frameToRender string
 
 	//Position things
+	moving           bool
 	x, y             float64
 	targetX, targetY float64
 
@@ -29,6 +30,16 @@ type Entity struct {
 	clockActive bool
 
 	hidden bool
+}
+
+func (e *Entity) Interact() {
+	if e.AttachedScript.HasLabel("onInteract") {
+
+		e.AttachedScript.Call("onInteract")
+
+	} else {
+		fmt.Println("No interac")
+	}
 }
 
 func (e *Entity) Draw(t *pixelgl.Window, offset pixel.Vec) {
@@ -74,6 +85,7 @@ func (e *Entity) HandleMovement() {
 		suffix := []string{"2", "1", "3", "1"}[frameNum]
 
 		e.frameToRender = directionName + suffix
+		e.moving = true
 
 	} else if deltaX != 0 { //Close enough to finish
 		//Back to normal position
@@ -81,6 +93,7 @@ func (e *Entity) HandleMovement() {
 		directionName := []string{"right", "left"}[int(dir+1)/2]
 		e.frameToRender = directionName + "1"
 
+		e.moving = false
 		//Snap to pixel perfect location
 		e.x = e.targetX
 		e.AttachedScript.Resume()
@@ -100,6 +113,7 @@ func (e *Entity) HandleMovement() {
 		suffix := []string{"2", "1", "3", "1"}[frameNum]
 
 		e.frameToRender = directionName + suffix
+		e.moving = true
 
 	} else if deltaY != 0 { //Close enough to finish
 		//Back to normal position
@@ -109,6 +123,7 @@ func (e *Entity) HandleMovement() {
 
 		//Snap to pixel perfect location
 		e.y = e.targetY
+		e.moving = false
 		e.AttachedScript.Resume()
 	}
 }

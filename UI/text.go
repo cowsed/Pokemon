@@ -4,6 +4,7 @@ import (
 	"fmt"
 	scripts "pokemon/Scripter"
 
+	"github.com/dusk125/pixelui"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -16,11 +17,21 @@ type DialogueHandler struct {
 	Active                 bool
 	ActiveScript           *scripts.Script
 	Drawer                 *TextDrawer
+
+	//Injected dependencies
+	UIHandler *pixelui.UI //To get input without colliding with imgui
+	OnClose   func()      //To reset input handling in Game
 }
 
+func (dh *DialogueHandler) HandleAllInput() {
+	if dh.UIHandler.JustPressed(pixelgl.KeySpace) {
+		dh.HandleKey(pixelgl.KeySpace)
+	}
+
+}
 func (dh *DialogueHandler) HandleKey(button pixelgl.Button) {
 
-	if dh.WaitingForConfirmation && button == pixelgl.KeyEnter {
+	if dh.WaitingForConfirmation && button == pixelgl.KeySpace {
 		dh.Confirmed()
 	}
 }
@@ -36,9 +47,11 @@ func (dh *DialogueHandler) Confirmed() {
 func (dh *DialogueHandler) Close() {
 	dh.Active = false
 	dh.ActiveScript = nil
-
+	dh.OnClose()
+	dh.OnClose = func() {}
 }
 func (dh *DialogueHandler) SetText(txt string, from *scripts.Script) {
+
 	dh.ActiveScript = from
 
 	dh.ListedText = txt

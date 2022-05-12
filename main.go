@@ -49,8 +49,9 @@ func run() {
 	Game.InitializeLogger()
 
 	Game.InitializeGraphics()
-	Game.InitializeGameUI()
+
 	Game.InitializeUI()
+	Game.InitializeGameUI()
 
 	Game.InitializeScriptEngine()
 
@@ -83,6 +84,27 @@ func run() {
 		check(err)
 
 		Game.AddEntity("guy", TestEntity)
+
+		TestEntity2 := &Entity{
+			AttachedScript: nil,
+			Sprite:         nil,
+			frameToRender:  "down1",
+		}
+
+		TestEntity2.x = float64(5)
+		TestEntity2.y = float64(5)
+		TestEntity2.targetX = float64(5)
+		TestEntity2.targetY = float64(5)
+
+		scr2 := scripts.NewScriptFromFile("Resources/Scripts/sign.ps")
+		scr2.Resume()
+		TestEntity2.AttachedScript = scr2
+
+		TestEntity2.hidden = true
+		TestEntity2.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+		check(err)
+
+		Game.AddEntity("sign", TestEntity2)
 	}
 
 	Game.CurrentScene = &Scene{

@@ -74,7 +74,7 @@ func (pc *PerformanceCounter) DrawUI() {
 
 	imgui.Checkbox("Turbo", &pc.gofast)
 	if pc.gofast {
-		UpdatesPerFrame = 10
+		UpdatesPerFrame = 5
 	} else {
 		UpdatesPerFrame = 1
 	}

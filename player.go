@@ -19,6 +19,13 @@ const (
 	Down
 )
 
+func (d Direction) String() string {
+	if d >= NoDirection && d <= Down {
+		return DirNames[d]
+	}
+	return "Unknown Direction"
+}
+
 var DirNames = [5]string{"None", "Left", "Right", "Up", "Down"}
 var speed = 3.0 / 60.0
 
@@ -29,8 +36,27 @@ type Player struct {
 	x, y             float64
 	targetX, targetY int
 
+	FacingDirection Direction
+
 	currentDirection Direction
 	queuedDirection  Direction
+}
+
+func (p *Player) CalcInteractPosition() (int, int) {
+	//player position + direction
+	dx := 0
+	dy := 0
+	switch p.FacingDirection {
+	case Down:
+		dy = -1
+	case Up:
+		dy = 1
+	case Left:
+		dx = -1
+	case Right:
+		dx = 1
+	}
+	return int(p.x) + dx, int(p.y) + dy
 }
 
 func (p *Player) CalcTargetPos() (float64, float64, int, int) {
@@ -95,6 +121,15 @@ func directionFromKey(k pixelgl.Button) Direction {
 }
 
 func (p *Player) HandleAllInput() {
+	if Game.ui.JustPressed(pixelgl.KeySpace) {
+		posx, posy := p.CalcInteractPosition()
+		Game.InteractAt(posx, posy)
+
+		return //Dont move after interacting
+	}
+	//Direction keys
+	//If held - move in that direction
+	//If not held - just face that direction
 	toWatch := []pixelgl.Button{pixelgl.KeyUp, pixelgl.KeyDown, pixelgl.KeyLeft, pixelgl.KeyRight}
 	for _, k := range toWatch {
 		if Game.ui.Pressed(k) {
@@ -104,12 +139,11 @@ func (p *Player) HandleAllInput() {
 		}
 
 		directionToGive := directionFromKey(k)
+		if DirectionCounts[k] > 1 {
+			p.faceDir(directionToGive)
+		}
 		if DirectionCounts[k] > FramesToHold {
-			p.faceDir(directionToGive)
 			p.HandleHeldInput(directionToGive)
-
-		} else if DirectionCounts[k] > 0 {
-			p.faceDir(directionToGive)
 		}
 	}
 }
@@ -128,15 +162,19 @@ func (p *Player) faceDir(d Direction) {
 }
 func (p *Player) faceDown() {
 	p.spriteName = "down1"
+	p.FacingDirection = Down
 }
 func (p *Player) faceUp() {
 	p.spriteName = "up1"
+	p.FacingDirection = Up
 }
 func (p *Player) faceLeft() {
 	p.spriteName = "left1"
+	p.FacingDirection = Left
 }
 func (p *Player) faceRight() {
 	p.spriteName = "right1"
+	p.FacingDirection = Right
 }
 func (p *Player) HandleHeldInput(dir Direction) {
 

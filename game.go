@@ -33,6 +33,9 @@ type GameStruct struct {
 	ActiveEntites map[string]*Entity
 
 	CurrentScene *Scene
+
+	InputHandleFunc func()
+	lastInputHandle func()
 }
 
 func (g *GameStruct) HandleInput() {
@@ -40,11 +43,8 @@ func (g *GameStruct) HandleInput() {
 		v := g.win.MousePosition()
 		log.Println("Clicky", v)
 	}
-	if g.ui.JustPressed(pixelgl.KeySpace) {
-		g.WordHandler.HandleKey(pixelgl.KeySpace)
-	}
 
-	g.player.HandleAllInput()
+	g.InputHandleFunc()
 
 }
 
@@ -55,6 +55,7 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 		B: .3,
 		A: 1,
 	})
+	win.SetComposeMethod(pixel.ComposeOver)
 
 	playerPos := pixel.V(g.player.x, g.player.y)
 
@@ -83,8 +84,8 @@ func (g *GameStruct) Draw(win *pixelgl.Window) {
 			A: 60,
 		}
 
-		d.Push(pixel.V((e.x+.5)*16*ImageScale, (e.y+.5)*16*ImageScale).Sub(playerPos.Scaled(16 * ImageScale)))
-		d.Circle(70, 10)
+		d.Push(pixel.V((e.x)*16*ImageScale, (e.y)*16*ImageScale).Sub(playerPos.Scaled(16 * ImageScale)).Add(win.Bounds().Center()))
+		d.Circle(60, 10)
 
 		d.Draw(win)
 	}
@@ -105,6 +106,7 @@ func (g *GameStruct) LoadPlayer() {
 		y:           2,
 		spriteName:  "down1",
 	}
+	g.InputHandleFunc = g.player.HandleAllInput
 }
 
 func (g *GameStruct) InitializeGraphics() {
@@ -129,9 +131,18 @@ func (g *GameStruct) InitializeScriptEngine() {
 	g.ScriptEngine.RegisterFunction("show", ShowFunction)
 
 }
+
+//Entity Stuff
 func (g *GameStruct) AddEntity(name string, E *Entity) {
 	g.ActiveEntites[name] = E
 	E.AttachedScript.SetMemory(".name", name)
+}
+func (g *GameStruct) InteractAt(x, y int) {
+	for _, e := range g.ActiveEntites {
+		if int(e.x+.5) == x && int(e.y+.5) == y {
+			e.Interact()
+		}
+	}
 }
 
 func (g *GameStruct) InitializeLogger() {

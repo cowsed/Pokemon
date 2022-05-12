@@ -26,7 +26,7 @@ func (g *GameStruct) DrawDebugUI() {
 
 	imgui.Begin("Debug")
 
-	imgui.BeginTabBar("Scripts")
+	imgui.BeginTabBarV("Scripts", 0)
 
 	if imgui.BeginTabItem("Debug Console") {
 
@@ -51,7 +51,7 @@ func (g *GameStruct) DrawDebugUI() {
 	}
 
 	if imgui.BeginTabItem("Active Entities") {
-		drawScriptStatuses(g)
+		drawEntityStatuses(g)
 		imgui.EndTabItem()
 	}
 
@@ -74,7 +74,7 @@ func (g *GameStruct) DrawDebugUI() {
 
 var selectedEntity string //String id into map
 
-func drawScriptStatuses(g *GameStruct) {
+func drawEntityStatuses(g *GameStruct) {
 	//Selected Script Info
 
 	if imgui.Button("Reset all") {
@@ -88,6 +88,7 @@ func drawScriptStatuses(g *GameStruct) {
 
 		imgui.Text(fmt.Sprintf("%s selected", selectedEntity))
 		imgui.Text(entity.AttachedScript.Status())
+		
 
 		if imgui.Button("Restart") {
 			entity.AttachedScript.Restart()
@@ -215,6 +216,8 @@ func (g *GameStruct) InitializeGameUI() {
 		ListedText:             "",
 		Active:                 false,
 		Drawer:                 ui.NewTextDrawer(g.atlas, g.win.Bounds().Size().X, g.win.Bounds().Size().Y),
+		UIHandler:              g.ui,
+		OnClose:                func() {},
 	}
 }
 
