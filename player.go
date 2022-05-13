@@ -176,13 +176,43 @@ func (p *Player) faceRight() {
 	p.spriteName = "right1"
 	p.FacingDirection = Right
 }
+
+func (g *GameStruct) TileOpen(x, y int, oldx, oldy int, excludeEntityName string) bool {
+	nextTile := g.CurrentScene.Env.GetCollision(x, y)
+	oldTile := Game.CurrentScene.Env.GetCollision(oldx, oldy)
+	envOpen := CheckBlocked(oldTile, nextTile)
+
+	//TODO - figure out why entity collision doesnt work and why environment collision still does
+	entityOpen := true
+	for n, e := range g.ActiveEntites {
+		if n == excludeEntityName {
+
+			continue
+		}
+		if x == int(e.x+.5) && y == int(e.y+.5) {
+			//Guy here
+			entityOpen = false
+		}
+		if x == int(e.targetX) && y == int(e.targetY) {
+			entityOpen = false
+		}
+	}
+
+	playerOpen := !(x == int(g.player.x+.5) && y == int(g.player.y+.5))
+	if excludeEntityName != "$player$" {
+		if int(g.player.targetX) == x && y == g.player.targetY {
+			playerOpen = false
+		}
+	}
+	return entityOpen && envOpen && playerOpen
+}
 func (p *Player) HandleHeldInput(dir Direction) {
 
 	//set if not moving, queue if already going somewhere
 	if p.currentDirection == NoDirection {
 		//if no direction currently we are snapped to the grid
 		p.currentDirection = dir
-
+		//Goto new spot
 		switch dir {
 		case Left:
 			p.targetX = int(p.x - 1)
@@ -194,7 +224,8 @@ func (p *Player) HandleHeldInput(dir Direction) {
 			p.targetY = int(p.y - 1)
 		}
 
-		if !CheckBlocked(Game.CurrentScene.Env.GetCollision(int(p.x), int(p.y)), Game.CurrentScene.Env.GetCollision(p.targetX, p.targetY)) {
+		if !Game.TileOpen(p.targetX, p.targetY, int(p.x), int(p.y), "$player$") {
+			//Set back to current spot
 			p.targetX = int(p.x)
 			p.targetY = int(p.y)
 			p.currentDirection = NoDirection
@@ -255,6 +286,7 @@ func (p *Player) Update() {
 		p.queuedDirection = NoDirection
 	}
 
+	p.faceDir(p.currentDirection)
 }
 
 func (p *Player) Draw(win *pixelgl.Window) {
