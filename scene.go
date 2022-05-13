@@ -50,14 +50,14 @@ var M = [][]CollisionData{
 	{0, 0, 1, 1, 1, 1, 1, 8, 8, 8, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-	{0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
 	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+	{0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0},
 }
 
 type TiledEnvironment struct {
@@ -79,9 +79,25 @@ func (t *TiledEnvironment) DrawCollisions(win *pixelgl.Window, campos pixel.Vec)
 
 	for x := 0; x < 24; x++ {
 		for y := 0; y < 20; y++ {
+			open := Game.TileOpen(x, y, 4, 4, "")
 
-			tile := t.GetCollision(x, y)
-			col := CollisionColors[int(tile)]
+			//tile := NotPassable //t.GetCollision(x, y)
+			col := pixel.RGBA{
+				R: 1,
+				G: 0,
+				B: 0,
+				A: CollisionAlpha,
+			} ///CollisionColors[int(tile)]
+
+			if open {
+				//tile = Level1
+				col = pixel.RGBA{
+					R: 0,
+					G: 1,
+					B: 0,
+					A: CollisionAlpha,
+				}
+			}
 
 			p1 := pixel.V(float64(x), float64(y)).Scaled(16 * ImageScale).Add(campos)
 			p2 := pixel.V(float64(x+1), float64(y+1)).Scaled(16 * ImageScale).Add(campos)

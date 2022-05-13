@@ -1,9 +1,12 @@
 package scripts
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 )
+
+var ErrorYield error = errors.New("YIELD")
 
 type ScriptEngine struct {
 	RegisteredFunctions map[string]ScriptFunction
@@ -104,6 +107,11 @@ func (scr *ScriptEngine) ExecuteScript(script *Script) error {
 		}
 		//Call the function
 		err := f.Function(args, script, scr)
+
+		if err == ErrorYield {
+			return nil
+		}
+
 		if err != nil {
 			script.Pause()
 			return err

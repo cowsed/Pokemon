@@ -90,6 +90,13 @@ func (s *Script) End() {
 	s.ended = true
 }
 
+func (s *Script) Backup(numTokens int) {
+	s.index -= numTokens
+	if s.index < 0 {
+		s.index = 0
+	}
+}
+
 func (s *Script) SetMemory(key, value string) {
 	s.memory[key] = value
 }

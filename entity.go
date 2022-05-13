@@ -11,7 +11,10 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
+var EntityWalkSpeed = 2.0 / 60.0
+
 type Entity struct {
+	name string
 	//Logic
 	AttachedScript *scripts.Script
 
@@ -30,6 +33,25 @@ type Entity struct {
 	clockActive bool
 
 	hidden bool
+}
+
+func NewEntity(name string, x, y float64, initialFrame, sheetPath, sheetDataPath string, script *scripts.Script) (*Entity, error) {
+	sprite, err := graphics.LoadSprite(sheetPath, sheetDataPath)
+	if err != nil {
+		return nil, err
+	}
+	script.Resume()
+	e := Entity{
+		name:           name,
+		AttachedScript: script,
+		Sprite:         sprite,
+		frameToRender:  initialFrame,
+		x:              x,
+		y:              y,
+		targetX:        x,
+		targetY:        y,
+	}
+	return &e, nil
 }
 
 func (e *Entity) Interact() {
@@ -69,62 +91,66 @@ func (e *Entity) Update(se *scripts.ScriptEngine) error {
 	return err
 }
 func (e *Entity) HandleMovement() {
-	speed := 4.0 / 60.0
 
 	//X
 	deltaX := e.targetX - e.x
-	if abs(deltaX) > 1.0/16 { //If off by more than a pixel
-		dir := sign(deltaX)
-		e.x += dir * speed
+	if Game.TileOpen(int(e.targetX), int(e.targetY), int(e.x), int(e.y), e.name) {
+		if abs(deltaX) > 1.0/16 { //If off by more than a pixel
 
-		//Calculate sprite
-		//left foot - center - right foot - center
-		_, r := math.Modf(abs(e.x))
-		frameNum := int(r * 4)
-		directionName := []string{"left", "right"}[int(dir+1)/2]
-		suffix := []string{"2", "1", "3", "1"}[frameNum]
+			dir := sign(deltaX)
+			e.x += dir * EntityWalkSpeed
 
-		e.frameToRender = directionName + suffix
-		e.moving = true
+			//Calculate sprite
+			//left foot - center - right foot - center
+			_, r := math.Modf(abs(e.x))
+			frameNum := int(r * 4)
+			directionName := []string{"left", "right"}[int(dir+1)/2]
+			suffix := []string{"2", "1", "3", "1"}[frameNum]
 
-	} else if deltaX != 0 { //Close enough to finish
-		//Back to normal position
-		dir := sign(deltaX)
-		directionName := []string{"right", "left"}[int(dir+1)/2]
-		e.frameToRender = directionName + "1"
+			e.frameToRender = directionName + suffix
+			e.moving = true
 
-		e.moving = false
-		//Snap to pixel perfect location
-		e.x = e.targetX
-		e.AttachedScript.Resume()
+		} else if deltaX != 0 { //Close enough to finish
+			//Back to normal position
+			dir := sign(deltaX)
+			directionName := []string{"left", "right"}[int(dir+1)/2]
+			e.frameToRender = directionName + "1"
+
+			e.moving = false
+			//Snap to pixel perfect location
+			e.x = e.targetX
+			e.AttachedScript.Resume()
+		}
 	}
 
 	//Y
 	deltaY := e.targetY - e.y
-	if abs(deltaY) > 1.0/16 { //If off by more than a pixel
-		dir := sign(deltaY)
-		e.y += dir * speed
+	if Game.TileOpen(int(e.targetX), int(e.targetY), int(e.x), int(e.y), e.name) {
+		if abs(deltaY) > 1.0/16 { //If off by more than a pixel
+			dir := sign(deltaY)
+			e.y += dir * EntityWalkSpeed
 
-		//Calculate sprite
-		//left foot - center - right foot - center
-		_, r := math.Modf(abs(e.y))
-		frameNum := int(r * 4)
-		directionName := []string{"down", "up"}[int(dir+1)/2]
-		suffix := []string{"2", "1", "3", "1"}[frameNum]
+			//Calculate sprite
+			//left foot - center - right foot - center
+			_, r := math.Modf(abs(e.y))
+			frameNum := int(r * 4)
+			directionName := []string{"down", "up"}[int(dir+1)/2]
+			suffix := []string{"2", "1", "3", "1"}[frameNum]
 
-		e.frameToRender = directionName + suffix
-		e.moving = true
+			e.frameToRender = directionName + suffix
+			e.moving = true
 
-	} else if deltaY != 0 { //Close enough to finish
-		//Back to normal position
-		dir := sign(deltaY)
-		directionName := []string{"up", "down"}[int(dir+1)/2]
-		e.frameToRender = directionName + "1"
+		} else if deltaY != 0 { //Close enough to finish
+			//Back to normal position
+			dir := sign(deltaY)
+			directionName := []string{"down", "up"}[int(dir+1)/2]
+			e.frameToRender = directionName + "1"
 
-		//Snap to pixel perfect location
-		e.y = e.targetY
-		e.moving = false
-		e.AttachedScript.Resume()
+			//Snap to pixel perfect location
+			e.y = e.targetY
+			e.moving = false
+			e.AttachedScript.Resume()
+		}
 	}
 }
 

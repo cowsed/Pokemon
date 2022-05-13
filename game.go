@@ -15,8 +15,6 @@ import (
 	"github.com/faiface/pixel/text"
 )
 
-var TestEntity *Entity
-
 var ImageScale float64 = 5
 
 type GameStruct struct {
@@ -140,7 +138,9 @@ func (g *GameStruct) AddEntity(name string, E *Entity) {
 func (g *GameStruct) InteractAt(x, y int) {
 	for _, e := range g.ActiveEntites {
 		if int(e.x+.5) == x && int(e.y+.5) == y {
-			e.Interact()
+			if !e.moving {
+				e.Interact()
+			}
 		}
 	}
 }

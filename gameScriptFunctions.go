@@ -168,10 +168,23 @@ var MovXFunction = scripts.ScriptFunction{
 		if _, ok := Game.ActiveEntites[who]; !ok {
 			return fmt.Errorf("no entity named %s", who)
 		}
+		e := Game.ActiveEntites[who]
 
 		//Already there
 		if Game.ActiveEntites[who].targetX == newX {
 			return nil
+		}
+		//Set Direction
+		if newX < Game.ActiveEntites[who].x {
+			Game.ActiveEntites[who].frameToRender = "left1"
+		} else {
+			Game.ActiveEntites[who].frameToRender = "right1"
+		}
+
+		//If theres a player in the way, go back a step so that it is still interactable
+		if !Game.TileOpen(int(newX), int(e.y), int(e.x), int(e.y), "") {
+			script.Backup(3)
+			return scripts.ErrorYield
 		}
 
 		Game.ActiveEntites[who].targetX = newX
@@ -183,7 +196,7 @@ var MovXFunction = scripts.ScriptFunction{
 	Docstring: "movx who target : moves the sprite specified to the location in the x direction",
 }
 
-//movx who tx
+//movy who ty
 var MovYFunction = scripts.ScriptFunction{
 	NumArguments: 2,
 	Function: func(args []string, script *scripts.Script, scr *scripts.ScriptEngine) error {
@@ -198,11 +211,26 @@ var MovYFunction = scripts.ScriptFunction{
 		if _, ok := Game.ActiveEntites[who]; !ok {
 			return fmt.Errorf("no entity named %s", who)
 		}
+		e := Game.ActiveEntites[who]
 
 		//Already there
-		if Game.ActiveEntites[who].targetY == newY {
+		if e.targetY == newY {
 			return nil
 		}
+
+		//Set Direction
+		if newY < e.y {
+			e.frameToRender = "down1"
+		} else {
+			e.frameToRender = "up1"
+		}
+
+		//If theres a player in the way, go back a step so that it is still interactable
+		if !Game.TileOpen(int(e.x), int(newY), int(e.x), int(e.y), "") {
+			script.Backup(3)
+			return scripts.ErrorYield
+		}
+
 		Game.ActiveEntites[who].targetY = newY
 		Game.ActiveEntites[who].AttachedScript.Pause()
 

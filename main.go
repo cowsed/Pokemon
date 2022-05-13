@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	graphics "pokemon/Graphics"
 	scripts "pokemon/Scripter"
 	"runtime/pprof"
 	"time"
@@ -65,46 +64,18 @@ func run() {
 	}
 	//Debug entities
 	{
-		TestEntity = &Entity{
-			AttachedScript: nil,
-			Sprite:         nil,
-			frameToRender:  "down1",
-		}
-
-		TestEntity.x = float64(4)
-		TestEntity.y = float64(4)
-		TestEntity.targetX = float64(4)
-		TestEntity.targetY = float64(4)
-
 		scr1 := scripts.NewScriptFromFile("Resources/Scripts/animtest.ps")
-		scr1.Resume()
-		TestEntity.AttachedScript = scr1
-
-		TestEntity.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+		TestEntity, err := NewEntity("guy", 4, 4, "down1", "Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json", scr1)
 		check(err)
-
 		Game.AddEntity("guy", TestEntity)
 
-		TestEntity2 := &Entity{
-			AttachedScript: nil,
-			Sprite:         nil,
-			frameToRender:  "down1",
-		}
-
-		TestEntity2.x = float64(5)
-		TestEntity2.y = float64(5)
-		TestEntity2.targetX = float64(5)
-		TestEntity2.targetY = float64(5)
-
 		scr2 := scripts.NewScriptFromFile("Resources/Scripts/sign.ps")
-		scr2.Resume()
-		TestEntity2.AttachedScript = scr2
-
-		TestEntity2.hidden = true
-		TestEntity2.Sprite, err = graphics.LoadSprite("Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json")
+		Sign, err := NewEntity("sign", 5, 5, "down1", "Resources/Sprites/Builtin/officer.png", "Resources/Sprites/Builtin/officer.json", scr2)
 		check(err)
 
-		Game.AddEntity("sign", TestEntity2)
+		Sign.hidden = true
+
+		Game.AddEntity("sign", Sign)
 	}
 
 	Game.CurrentScene = &Scene{
